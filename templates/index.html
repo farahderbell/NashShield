@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NashShield Simulation</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>NashShield - Simulation interactive</h1>
+
+    <label>Quota A: <input type="range" id="qA" min="0" max="1" step="0.01" value="0.2"></label><span id="valA">0.2</span><br>
+    <label>Quota B: <input type="range" id="qB" min="0" max="1" step="0.01" value="0.2"></label><span id="valB">0.2</span><br>
+    <label>Quota C: <input type="range" id="qC" min="0" max="1" step="0.01" value="0.2"></label><span id="valC">0.2</span><br>
+    <button onclick="runSimulation()">Simuler</button>
+
+    <h2>Profits moyens</h2>
+    <div id="profits"></div>
+
+    <script>
+        function runSimulation(){
+            let qA = document.getElementById("qA").value;
+            let qB = document.getElementById("qB").value;
+            let qC = document.getElementById("qC").value;
+
+            document.getElementById("valA").innerText = qA;
+            document.getElementById("valB").innerText = qB;
+            document.getElementById("valC").innerText = qC;
+
+            fetch('/simulate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({qA, qB, qC})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('profits').innerHTML =
+                    `A: ${data.profit_A.toFixed(2)}, B: ${data.profit_B.toFixed(2)}, C: ${data.profit_C.toFixed(2)}`;
+            });
+        }
+    </script>
+</body>
+</html>
