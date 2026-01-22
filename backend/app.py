@@ -24,6 +24,10 @@ N = 1000  # Reduced from 10000 for better performance
 def index():
     return render_template('index.html')
 
+@app.route('/welcome')
+def welcome():
+    return render_template('welcome.html')
+
 @app.route('/test')
 def test():
     return render_template('test.html')
