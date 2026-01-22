@@ -6,7 +6,7 @@
 
 
 ![Welcome to NashShield](NashSheild/images/welcome.png)
-<img src="docs/images/welcome.png" alt="Welcome to NashShield" width="600">
+
 
 
 ---
