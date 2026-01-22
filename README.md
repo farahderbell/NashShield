@@ -567,9 +567,7 @@ POST /simulate
     }
 ```
 
-**Scenarios:**
-- **Classic:** Uses retention rates you specify (qA, qB, qC)
-- **Nash:** Finds and uses optimal retention rates
+
 
 ### Frontend Architecture
 
@@ -718,30 +716,13 @@ The mathematical models are **simplified versions** of real-world insurance dyna
 
 By using game theory and mathematical optimization, insurance companies can increase profits by **30-50%** while reducing risk. That's the power of Nash Equilibrium! 🚀
 
----
 
-## ⚠️ Final Note
-
-**This is a FUN educational project!** 🎮
-
-Perfect for:
-- ✅ Learning game theory
-- ✅ Understanding insurance concepts
-- ✅ Exploring Nash equilibrium
-- ✅ School/university projects
-- ✅ Portfolio demonstrations
-
-NOT for:
-- ❌ Real insurance decisions
-- ❌ Financial transactions
-- ❌ Professional risk management
-- ❌ Regulatory compliance
 
 Enjoy learning! Have fun exploring the math! 🚀
 
----
 
 *Made with ❤️ by Farah*
+ps : i really recommend to watch the movie 'a beautiful mind'
 
 *Last Updated: January 22, 2026*
 *Created for understanding insurance game theory and risk sharing optimization*
