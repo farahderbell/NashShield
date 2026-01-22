@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testClick()">Click Me</button>
+    <div id="result"></div>
+
+    <script>
+        function testClick() {
+            alert('Button clicked!');
+            document.getElementById('result').innerHTML = 'Button was clicked!';
+            
+            // Test API call
+            fetch('/simulate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({qA: 0.2, qB: 0.2, qC: 0.2, scenario: 'classic'})
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log('Response:', data);
+                document.getElementById('result').innerHTML = JSON.stringify(data);
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                document.getElementById('result').innerHTML = 'Error: ' + err;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -27,3 +27,18 @@ def simulation_3_assureurs(S0, mu, sigma, T, N, quotas):
     profit_B = calculer_profit(sinistres, quotas[1])
     profit_C = calculer_profit(sinistres, quotas[2])
     return profit_A, profit_B, profit_C
+
+def simulation_3_assureurs_different_claims(S0A, S0B, S0C, mu, sigma, T, N, quotas):
+    """
+    Simulation pour 3 assureurs avec claims différents
+    S0A, S0B, S0C : initial claims pour chaque assureur
+    quotas : liste [q1, q2, q3]
+    """
+    sinistres_A = simulate_GBM(S0A, mu, sigma, T, N)
+    sinistres_B = simulate_GBM(S0B, mu, sigma, T, N)
+    sinistres_C = simulate_GBM(S0C, mu, sigma, T, N)
+    
+    profit_A = calculer_profit(sinistres_A, quotas[0])
+    profit_B = calculer_profit(sinistres_B, quotas[1])
+    profit_C = calculer_profit(sinistres_C, quotas[2])
+    return profit_A, profit_B, profit_C
