@@ -265,22 +265,22 @@
                 <div class="feature">
                     <strong>🔍 Pillar II: Qualitative Assessment</strong>
                     <div class="feature-text">Evaluate governance, ORSA, and supervisory review processes</div>
-                    <button class="btn-primary" onclick="alert('Pillar II module coming soon!')" style="width: 100%; margin-top: 10px;">
+                    <button class="btn-primary" onclick="goToPiliar2()" style="width: 100%; margin-top: 10px;">
                         Explore Pillar II
                     </button>
                 </div>
                 <div class="feature">
                     <strong>📢 Pillar III: Disclosure & Transparency</strong>
                     <div class="feature-text">Generate regulatory reports and public disclosure requirements</div>
-                    <button class="btn-primary" onclick="alert('Pillar III module coming soon!')" style="width: 100%; margin-top: 10px;">
+                    <button class="btn-primary" onclick="goToPiliar3()" style="width: 100%; margin-top: 10px;">
                         Explore Pillar III
                     </button>
                 </div>
                 <div class="feature">
                     <strong>📊 Facts</strong>
                     <div class="feature-text">Deep dive into market, credit, operational, and underwriting risks</div>
-                    <button class="btn-primary" onclick="alert('Risk Module coming soon!')" style="width: 100%; margin-top: 10px;">
-                        explore facts about assurancess
+                    <button class="btn-primary" onclick="goTofact()" style="width: 100%; margin-top: 10px;">
+                        explore facts !
                     </button>
                 </div>
             </div>
@@ -411,7 +411,16 @@ class Premium {
 
      function goToPiliar1() {
         window.location.href = '/piliar1';
-    s}
+    }
+     function goToPiliar2() {
+        window.location.href = '/piliar2';
+    }
+     function goToPiliar3() {
+        window.location.href = '/piliar3';
+    }
+     function goTofact() {
+        window.location.href = '/fact';
+    }
 </script>
 
 </body>

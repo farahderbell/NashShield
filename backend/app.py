@@ -35,6 +35,15 @@ def test():
 @app.route('/piliar1')
 def piliar1():
     return render_template('piliar1.html')
+@app.route('/piliar2')
+def piliar2():
+    return render_template('piliar2.html')
+@app.route('/piliar3')
+def piliar3():
+    return render_template('piliar3.html')
+@app.route('/fact')
+def fact():
+    return render_template('fact.html')
 
 @app.route('/simulate', methods=['POST'])
 def simulate():
