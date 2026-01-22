@@ -32,6 +32,10 @@ def welcome():
 def test():
     return render_template('test.html')
 
+@app.route('/piliar1')
+def piliar1():
+    return render_template('piliar1.html')
+
 @app.route('/simulate', methods=['POST'])
 def simulate():
     """
@@ -120,5 +124,3 @@ def simulate():
             "error": str(e)
         }), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)

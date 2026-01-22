@@ -38,7 +38,7 @@
             position: relative;
             z-index: 1;
           
-            margin: auto;
+            margin: auto ;
             padding: 40px 20px 80px;
             display: flex;
             flex-direction: column;
@@ -75,7 +75,7 @@
             background: var(--glass);
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 20px;
-            padding: 50px;
+            padding: 30px;
             backdrop-filter: blur(12px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.35);
             max-width: 700px;
@@ -190,7 +190,7 @@
         <p>Risk Sharing, Game Theory & Insurance Optimization</p>
     </header>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;width: 100%;max-width: 100%">
+   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; width: 100%; padding: 0; box-sizing: border-box;">
         <!-- Left Card -->
         <div class="welcome-card">
             <h2>Welcome to NashShield</h2>
@@ -258,7 +258,7 @@
                 <div class="feature">
                     <strong>🏛️ Pillar I: Quantitative Requirements</strong>
                     <div class="feature-text">Calculate SCR and MCR using standard formula or internal models</div>
-                    <button class="btn-primary" onclick="alert('Pillar I module coming soon!')" style="width: 100%; margin-top: 10px;">
+                    <button class="btn-primary" onclick="goToPiliar1()" style="width: 100%; margin-top: 10px;">
                         Explore Pillar I
                     </button>
                 </div>
@@ -306,68 +306,112 @@
 </div>
 
 <script>
-    // Particle background animation
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
+   // Particle background animation
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
 
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const particles = [];
+const particleCount = 50;
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 4 + 2; // Plus grandes particules (2-6px au lieu de 0.5-2.5px)
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.5 + 0.3;
+        // Alterner entre blanc et jaune clair
+        this.color = Math.random() > 0.5 
+            ? { r: 255, g: 255, b: 255 }      // Blanc
+            : { r: 255, g: 255, b: 200 };     // Jaune clair
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+    }
+
+    draw() {
+        ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    
+}
+
+for (let i = 0; i < particleCount; i++) {
+    // Avant le loop de dessin dans animate() :
+ctx.fillStyle = 'rgba(56, 189, 248, 0.02)';
+particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 50, 0, Math.PI * 2);
+    ctx.fill();
+});
+    particles.push(new Particle());
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let p of particles) {
+        p.update();
+        p.draw();
+    }
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+});
 
-    const particles = [];
-    const particleCount = 50;
 
-    class Particle {
-        constructor() {
+
+class Premium {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = -10;
+        this.size = Math.random() * 3 + 1;
+        this.speed = Math.random() * 2 + 1;
+        this.swing = Math.random() * 2 - 1;
+    }
+    
+    update() {
+        this.y += this.speed;
+        this.x += Math.sin(this.y * 0.01) * this.swing;
+        if (this.y > canvas.height) {
+            this.y = -10;
             this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2 + 0.5;
-            this.speedX = (Math.random() - 0.5) * 0.5;
-            this.speedY = (Math.random() - 0.5) * 0.5;
-            this.opacity = Math.random() * 0.5 + 0.2;
-        }
-
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-            if (this.x > canvas.width) this.x = 0;
-            if (this.x < 0) this.x = canvas.width;
-            if (this.y > canvas.height) this.y = 0;
-            if (this.y < 0) this.y = canvas.height;
-        }
-
-        draw() {
-            ctx.fillStyle = `rgba(56, 189, 248, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
         }
     }
-
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
+    
+    draw() {
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.6)'; // Or
+        ctx.fillRect(this.x, this.y, this.size, this.size * 2);
     }
+}
 
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let p of particles) {
-            p.update();
-            p.draw();
-        }
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
 
     // Navigation
     function goToSimulator() {
         window.location.href = '/';
     }
+
+     function goToPiliar1() {
+        window.location.href = '/piliar1';
+    s}
 </script>
 
 </body>

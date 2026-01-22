@@ -45,10 +45,12 @@
             padding: 40px 20px 80px;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+       header {
+    position: relative;  /* AJOUTEZ CETTE LIGNE */
+    text-align: center;
+    margin-bottom: 50px;
+    padding-top: 60px;  /* AJOUTEZ CETTE LIGNE pour donner de l'espace au bouton */
+}
 
         header h1 {
             font-size: 3rem;
@@ -245,23 +247,23 @@
 
 <div class="container">
 
-    <header>
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <h1 style="margin: 0;">NashShield</h1>
-            <button onclick="goToWelcome()" style="padding: 10px 20px; background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                ← Back to Welcome
-            </button>
-        </div>
-        <p>
-            An interactive platform for risk sharing analysis combining
-            <b>Brownian motion</b>, <b>Monte Carlo simulation</b> and
-            <b>Nash equilibrium</b> within insurance and reinsurance frameworks.
-        </p>
+   <header>
+    <button onclick="goToWelcome()" style="position: absolute; top: 10px; left: 10px; padding: 6px 12px; background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; width: auto; z-index: 10;">
+        ← Back
+    </button>
+    
+    <h1 style="margin: 0;">NashShield</h1>
+    
+    <p>
+        An interactive platform for risk sharing analysis combining
+        <b>Brownian motion</b>, <b>Monte Carlo simulation</b> and
+        <b>Nash equilibrium</b> within insurance and reinsurance frameworks.
+    </p>
 
-        <blockquote>
-            "Randomness is not chaos — it is structure waiting to be understood."
-        </blockquote>
-    </header>
+    <blockquote>
+        "Randomness is not chaos — it is structure waiting to be understood."
+    </blockquote>
+</header>
 
     <!-- INTRODUCTION -->
     <div class="card">
