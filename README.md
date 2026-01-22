@@ -5,7 +5,7 @@
 ⚠️ **DISCLAIMER:** This project is for **educational and entertainment purposes only**. It is **NOT** intended for real-world insurance usage or financial decision-making. The models and simulations are simplified for learning purposes.
 
 
-![Welcome to NashShield](docs/images/welcome.png)
+![Welcome to NashShield](NashSheild/images/welcome.png)
 <img src="docs/images/welcome.png" alt="Welcome to NashShield" width="600">
 
 
