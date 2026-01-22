@@ -37,7 +37,7 @@
         .container {
             position: relative;
             z-index: 1;
-            max-width: 1100px;
+          
             margin: auto;
             padding: 40px 20px 80px;
             display: flex;
@@ -181,8 +181,6 @@
     </style>
 </head>
 
-<body>
-
 <canvas id="particles"></canvas>
 
 <div class="container">
@@ -192,7 +190,7 @@
         <p>Risk Sharing, Game Theory & Insurance Optimization</p>
     </header>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; width: 100%;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;width: 100%;max-width: 100%">
         <!-- Left Card -->
         <div class="welcome-card">
             <h2>Welcome to NashShield</h2>
@@ -214,9 +212,9 @@
             </p>
         </div>
 
-        <!-- Right Card -->
+        <!-- Middle Card - Risk Sharing -->
         <div class="welcome-card">
-            <h2>What You Can Do</h2>
+            <h2>Risk Sharing Lab</h2>
 
             <div class="features">
                 <div class="feature">
@@ -251,8 +249,55 @@
                 </button>
             </div>
         </div>
-    </div>
 
+        <!-- Right Card - Solvency Lab -->
+        <div class="welcome-card">
+            <h2>Solvency II Lab</h2>
+
+            <div class="features">
+                <div class="feature">
+                    <strong>🏛️ Pillar I: Quantitative Requirements</strong>
+                    <div class="feature-text">Calculate SCR and MCR using standard formula or internal models</div>
+                    <button class="btn-primary" onclick="alert('Pillar I module coming soon!')" style="width: 100%; margin-top: 10px;">
+                        Explore Pillar I
+                    </button>
+                </div>
+                <div class="feature">
+                    <strong>🔍 Pillar II: Qualitative Assessment</strong>
+                    <div class="feature-text">Evaluate governance, ORSA, and supervisory review processes</div>
+                    <button class="btn-primary" onclick="alert('Pillar II module coming soon!')" style="width: 100%; margin-top: 10px;">
+                        Explore Pillar II
+                    </button>
+                </div>
+                <div class="feature">
+                    <strong>📢 Pillar III: Disclosure & Transparency</strong>
+                    <div class="feature-text">Generate regulatory reports and public disclosure requirements</div>
+                    <button class="btn-primary" onclick="alert('Pillar III module coming soon!')" style="width: 100%; margin-top: 10px;">
+                        Explore Pillar III
+                    </button>
+                </div>
+                <div class="feature">
+                    <strong>📊 Facts</strong>
+                    <div class="feature-text">Deep dive into market, credit, operational, and underwriting risks</div>
+                    <button class="btn-primary" onclick="alert('Risk Module coming soon!')" style="width: 100%; margin-top: 10px;">
+                        explore facts about assurancess
+                    </button>
+                </div>
+            </div>
+
+            <h3 style="color: var(--accent); margin-top: 30px;">Need Help?</h3>
+            <p style="color: #cbd5f5; margin-bottom: 30px;">
+                Access comprehensive documentation and tutorials on Solvency II framework.
+            </p>
+
+            <div class="button-group" style="flex-direction: column; gap: 10px;">
+                <button class="btn-secondary" onclick="alert('Documentation coming soon!')" style="width: 100%; min-width: unset;">
+                    📚 Learn More
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
     <footer>
         <p>NashShield © 2026 | For Educational Purposes Only</p>
         <p>Built with Python • Flask • Game Theory • Insurance Expertise</p>
