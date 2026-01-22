@@ -722,7 +722,7 @@ Enjoy learning! Have fun exploring the math! 🚀
 
 
 *Made with ❤️ by Farah*
-ps : i really recommend to watch the movie 'a beautiful mind'
+*ps : i really recommend to watch the movie 'a beautiful mind'*
 
 *Last Updated: January 22, 2026*
 *Created for understanding insurance game theory and risk sharing optimization*
