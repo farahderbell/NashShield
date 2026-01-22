@@ -61,12 +61,7 @@ Game theory (specifically **Nash Equilibrium**) shows the optimal strategy where
 - **Total profits increase by 30-50%** 📈
 - The system is stable (no one can do better by changing strategy alone)
 
-### Real-World Impact
-| Scenario | Total Profit |
-|----------|--------------|
-| Everyone acts selfish | $500 |
-| Using Nash Equilibrium | $750+ |
-| **Improvement** | **+50%** |
+
 
 ---
 
