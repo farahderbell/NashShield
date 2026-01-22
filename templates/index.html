@@ -217,67 +217,82 @@
     <div class="card">
         <h2>📖 How It Works</h2>
         <div class="info-box">
-            <p><strong>Quota-Share Reinsurance:</strong> Each player (insurer) chooses a quota representing the portion of risk they retain. A quota of 0 means no risk accepted, while 1 means accepting all the risk. The remaining risk is transferred to reinsurers.</p>
+            <p><strong>Real Quota-Share Reinsurance Formula:</strong></p>
+            <ul style="color: #cbd5f5; line-height: 1.8;">
+                <li><strong>Q</strong> = Ceded Quota (percentage ceded to reinsurer) → e.g., 70%</li>
+                <li><strong>Retention</strong> = 1 - Q (percentage kept by primary insurer) → e.g., 30%</li>
+                <li><strong>Ceded Premium:</strong> Pc = Q × P (premium transferred to reinsurer)</li>
+                <li><strong>Ceded Claims:</strong> Cc = Q × C (claims transferred to reinsurer)</li>
+                <li><strong>Profit Formula:</strong> Profit = Retention × (Premium - Claims) = (1-Q) × (P - C)</li>
+            </ul>
             
-            <p><strong>Classic Scenario:</strong> Players use the quotas you set via the sliders. Profits are calculated based on these fixed choices.</p>
+            <p><strong>Classic Scenario:</strong> Players use the retention rates you set via the sliders. Profits are calculated based on these fixed choices using the real formula.</p>
             
-            <p><strong>Nash Equilibrium:</strong> The system attempts to find an optimal distribution where no player can improve their profit by unilaterally changing their quota.</p>
+            <p><strong>Nash Equilibrium:</strong> The system finds an optimal distribution of retention rates where no player can improve their profit by unilaterally changing their strategy.</p>
             
-            <p><strong>Constraint:</strong> The sum of all quotas must be ≤ 1 to ensure valid risk distribution.</p>
+            <p><strong>Constraint:</strong> The sum of all retention rates must be ≤ 1.0 to ensure valid risk distribution.</p>
         </div>
     </div>
 
     <!-- CLAIM PARAMETERS -->
     <div class="card">
-        <h2>💰 Initial Claims by Insurer</h2>
+        <h2>💰 Initial Premiums by Insurer (Million Dollars)</h2>
 
         <blockquote>
-            "The initial claim size determines exposure magnitude for each player."
+            "The initial premium size determines exposure magnitude for each player."
         </blockquote>
 
+        <p style="color: #cbd5f5; margin-bottom: 20px;">
+            <strong>⚠️ All values are in MILLION DOLLARS</strong> | Example: 1000 = $1,000 Million = $1 Billion
+        </p>
+
         <div class="slider-group">
-            <label>Player A Claim (S₀) <span id="valS0A">1000</span></label>
+            <label>Player A Premium (S₀) <span id="valS0A">1000</span> Million $</label>
             <input type="range" id="S0A" min="100" max="5000" step="100" value="1000">
-            <div class="slider-hint">Initial claim amount ($) | Min: $100 | Max: $5000</div>
+            <div class="slider-hint">Initial premium in Million $ | Min: $100M | Max: $5000M</div>
         </div>
 
         <div class="slider-group">
-            <label>Player B Claim (S₀) <span id="valS0B">1000</span></label>
+            <label>Player B Premium (S₀) <span id="valS0B">1000</span> Million $</label>
             <input type="range" id="S0B" min="100" max="5000" step="100" value="1000">
-            <div class="slider-hint">Initial claim amount ($) | Min: $100 | Max: $5000</div>
+            <div class="slider-hint">Initial premium in Million $ | Min: $100M | Max: $5000M</div>
         </div>
 
         <div class="slider-group">
-            <label>Player C Claim (S₀) <span id="valS0C">1000</span></label>
+            <label>Player C Premium (S₀) <span id="valS0C">1000</span> Million $</label>
             <input type="range" id="S0C" min="100" max="5000" step="100" value="1000">
-            <div class="slider-hint">Initial claim amount ($) | Min: $100 | Max: $5000</div>
+            <div class="slider-hint">Initial premium in Million $ | Min: $100M | Max: $5000M</div>
         </div>
     </div>
 
     <!-- STRATEGIES -->
     <div class="card">
-        <h2>🎲 Players' Strategies (Quota-Share)</h2>
+        <h2>🎲 Players' Retention Strategies</h2>
 
         <blockquote>
             "In game theory, strategy is choice under uncertainty." — J. Nash
         </blockquote>
 
+        <p style="color: #94a3b8; margin-bottom: 20px;">
+            <strong>Retention Rate:</strong> Percentage of premium and claims kept by the insurer (0 = cede all, 1 = keep all)
+        </p>
+
         <div class="slider-group">
-            <label>Player A <span id="valA">0.20</span></label>
+            <label>Player A Retention Rate <span id="valA">0.20</span></label>
             <input type="range" id="qA" min="0" max="1" step="0.01" value="0.2">
-            <div class="slider-hint">0 = no risk | 0.5 = moderate risk | 1 = full risk</div>
+            <div class="slider-hint">0 = cede all risk | 0.5 = retain 50% | 1.0 = retain all risk</div>
         </div>
 
         <div class="slider-group">
-            <label>Player B <span id="valB">0.20</span></label>
+            <label>Player B Retention Rate <span id="valB">0.20</span></label>
             <input type="range" id="qB" min="0" max="1" step="0.01" value="0.2">
-            <div class="slider-hint">0 = no risk | 0.5 = moderate risk | 1 = full risk</div>
+            <div class="slider-hint">0 = cede all risk | 0.5 = retain 50% | 1.0 = retain all risk</div>
         </div>
 
         <div class="slider-group">
-            <label>Player C <span id="valC">0.20</span></label>
+            <label>Player C Retention Rate <span id="valC">0.20</span></label>
             <input type="range" id="qC" min="0" max="1" step="0.01" value="0.2">
-            <div class="slider-hint">0 = no risk | 0.5 = moderate risk | 1 = full risk</div>
+            <div class="slider-hint">0 = cede all risk | 0.5 = retain 50% | 1.0 = retain all risk</div>
         </div>
 
         <div class="slider-group">
@@ -287,7 +302,7 @@
                     <option value="nash">Nash Equilibrium</option>
                 </select>
             </label>
-            <div class="slider-hint">Classic: use your quotas | Nash: optimize distribution</div>
+            <div class="slider-hint">Classic: use your retention rates | Nash: find optimal distribution</div>
         </div>
 
         <button id="runBtn" onclick="runSimulation()">Run Simulation</button>
@@ -296,23 +311,27 @@
 
     <!-- RESULTS -->
     <div class="card">
-        <h2>📊 Expected Payoffs</h2>
+        <h2>📊 Expected Payoffs (Million Dollars)</h2>
 
         <blockquote>
             "Risk cannot be eliminated, only redistributed."
         </blockquote>
 
+        <p style="color: #cbd5f5; margin-bottom: 20px;">
+            <strong>Results in Million Dollars:</strong> Profit values below are in Million $
+        </p>
+
         <div class="results">
             <div class="result-box">
-                Player A<br><span id="pA">—</span>
+                Player A Profit<br><span id="pA">—</span> Million $
                 <small id="pA_info"></small>
             </div>
             <div class="result-box">
-                Player B<br><span id="pB">—</span>
+                Player B Profit<br><span id="pB">—</span> Million $
                 <small id="pB_info"></small>
             </div>
             <div class="result-box">
-                Player C<br><span id="pC">—</span>
+                Player C Profit<br><span id="pC">—</span> Million $
                 <small id="pC_info"></small>
             </div>
         </div>
@@ -322,25 +341,29 @@
 
     <!-- COMPARISON CLASSIC vs NASH -->
     <div class="card">
-        <h2>⚖️ Comparison: Classic vs Nash</h2>
+        <h2>⚖️ Comparison: Classic vs Nash (Million Dollars)</h2>
 
         <blockquote>
             "The Nash equilibrium reveals how strategic thinking transforms risk allocation."
         </blockquote>
 
+        <p style="color: #cbd5f5; margin-bottom: 20px;">
+            <strong>Comparison in Million Dollars:</strong> See how Nash equilibrium optimizes profit distribution
+        </p>
+
         <div class="results">
             <div class="result-box">
-                Player A<br>
+                Player A (Million $)<br>
                 Classic: <span id="compA_classic">—</span><br>
                 Nash: <span id="compA_nash">—</span>
             </div>
             <div class="result-box">
-                Player B<br>
+                Player B (Million $)<br>
                 Classic: <span id="compB_classic">—</span><br>
                 Nash: <span id="compB_nash">—</span>
             </div>
             <div class="result-box">
-                Player C<br>
+                Player C (Million $)<br>
                 Classic: <span id="compC_classic">—</span><br>
                 Nash: <span id="compC_nash">—</span>
             </div>
@@ -451,14 +474,14 @@ async function runSimulation() {
         document.getElementById('pB').innerText = currentData.profit_B.toFixed(2);
         document.getElementById('pC').innerText = currentData.profit_C.toFixed(2);
 
-        document.getElementById('pA_info').innerText = 'Quota: ' + qA.toFixed(2);
-        document.getElementById('pB_info').innerText = 'Quota: ' + qB.toFixed(2);
-        document.getElementById('pC_info').innerText = 'Quota: ' + qC.toFixed(2);
+        document.getElementById('pA_info').innerText = 'Retention: ' + qA.toFixed(2);
+        document.getElementById('pB_info').innerText = 'Retention: ' + qB.toFixed(2);
+        document.getElementById('pC_info').innerText = 'Retention: ' + qC.toFixed(2);
 
         document.getElementById('nash').innerText = 
             scenario === 'nash' 
                 ? "⚖️ Nash equilibrium applied - optimized risk distribution." 
-                : "📊 Classic scenario - using your specified quotas.";
+                : "📊 Classic scenario - using your specified retention rates.";
 
         // Update comparison card
         document.getElementById('compA_classic').innerText = classicData.profit_A.toFixed(2);

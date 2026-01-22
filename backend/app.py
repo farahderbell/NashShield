@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-from backend.simulation import simulation_3_assureurs, simulation_3_assureurs_different_claims
-from backend.nash import nash_equilibrium_3_assureurs, nash_equilibrium_3_assureurs_different_claims
+from backend.simulation import simulation_3_insurers, simulation_3_insurers_different_premiums
+from backend.nash import nash_equilibrium_3_insurers, nash_equilibrium_3_insurers_different_premiums
 import numpy as np
 import os
 
@@ -30,46 +30,67 @@ def test():
 
 @app.route('/simulate', methods=['POST'])
 def simulate():
+    """
+    API endpoint for quota-share reinsurance simulation.
+    
+    Real Formula:
+    - Q = Ceded quota percentage (e.g., 0.7 = 70% ceded)
+    - Retention = 1 - Q (percentage kept by primary insurer)
+    - Prime cédée = Q × Prime (ceded premium)
+    - Charge cédée = Q × Sinistre (ceded claim)
+    - Profit = Retention × (Prime - Sinistre)
+    
+    Request JSON:
+        - qA, qB, qC: retention rates for each insurer (0-1)
+        - S0A, S0B, S0C: initial premiums for each insurer
+        - scenario: 'classic' (user's choice) or 'nash' (equilibrium)
+    
+    Response JSON:
+        - profit_A, profit_B, profit_C: mean expected profits
+        - scenario: which scenario was run
+    """
     try:
         print("\n[DEBUG] ===== NEW REQUEST =====")
         data = request.get_json()
         print(f"[DEBUG] Received JSON data: {data}")
 
-        qA = float(data.get('qA', 0))
-        qB = float(data.get('qB', 0))
-        qC = float(data.get('qC', 0))
+        # Parse retention rates (0-1, representing % kept by insurer)
+        retA = float(data.get('qA', 0))
+        retB = float(data.get('qB', 0))
+        retC = float(data.get('qC', 0))
         S0A = float(data.get('S0A', 1000))
         S0B = float(data.get('S0B', 1000))
         S0C = float(data.get('S0C', 1000))
         scenario = data.get('scenario', 'classic')
         
-        print(f"[DEBUG] Parsed: qA={qA}, qB={qB}, qC={qC}, S0A={S0A}, S0B={S0B}, S0C={S0C}, scenario={scenario}")
+        print(f"[DEBUG] Parsed: retA={retA}, retB={retB}, retC={retC}, S0A={S0A}, S0B={S0B}, S0C={S0C}, scenario={scenario}")
 
-        # Quota-share constraint
-        if qA + qB + qC > 1:
-            print(f"[DEBUG] Constraint violation: sum={qA+qB+qC}")
+        # Constraint: sum of retention rates ≤ 1
+        # (retentions + ceded portions must sum to ≤ 1 across all parties)
+        if retA + retB + retC > 1:
+            print(f"[DEBUG] Constraint violation: sum={retA+retB+retC}")
             return jsonify({
-                "error": "Sum of quota-shares must be ≤ 1."
+                "error": "Sum of retention rates must be ≤ 1.0"
             }), 400
 
         if scenario == 'classic':
-            print("[DEBUG] Running classic scenario...")
-            profit_A, profit_B, profit_C = simulation_3_assureurs_different_claims(
-                S0A, S0B, S0C, mu, sigma, T, N, [qA, qB, qC]
+            print("[DEBUG] Running classic scenario (user-selected retentions)...")
+            profit_A, profit_B, profit_C = simulation_3_insurers_different_premiums(
+                S0A, S0B, S0C, mu, sigma, T, N, [retA, retB, retC]
             )
             print(f"[DEBUG] Classic done: A={len(profit_A)}, B={len(profit_B)}, C={len(profit_C)}")
             
         elif scenario == 'nash':
-            print("[DEBUG] Running nash scenario...")
-            quotas_options = [round(i * 0.1, 1) for i in range(11)]
-            print(f"[DEBUG] Quota options: {quotas_options}")
+            print("[DEBUG] Running nash equilibrium scenario...")
+            retention_options = [round(i * 0.1, 1) for i in range(11)]
+            print(f"[DEBUG] Retention options: {retention_options}")
             print(f"[DEBUG] Starting nash_equilibrium calculation...")
-            best_quotas, profits_nash = nash_equilibrium_3_assureurs_different_claims(
-                S0A, S0B, S0C, mu, sigma, T, N, quotas_options
+            best_retentions, profits_nash = nash_equilibrium_3_insurers_different_premiums(
+                S0A, S0B, S0C, mu, sigma, T, N, retention_options
             )
-            print(f"[DEBUG] Nash done: quotas={best_quotas}, profits={profits_nash}")
-            profit_A, profit_B, profit_C = simulation_3_assureurs_different_claims(
-                S0A, S0B, S0C, mu, sigma, T, N, best_quotas
+            print(f"[DEBUG] Nash done: retentions={best_retentions}, profits={profits_nash}")
+            profit_A, profit_B, profit_C = simulation_3_insurers_different_premiums(
+                S0A, S0B, S0C, mu, sigma, T, N, best_retentions
             )
             print(f"[DEBUG] Final simulation done")
         else:
