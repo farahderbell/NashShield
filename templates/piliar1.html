@@ -2,20 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NashShield | Risk, Randomness & Nash Equilibrium</title>
-
-    <!-- Plotly -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
-    <!-- Google Font -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCR Calculator - Pillar I | NashShield</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --primary: #1e3a8a;
             --secondary: #0f172a;
             --accent: #38bdf8;
             --glass: rgba(255,255,255,0.08);
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
         }
 
         * {
@@ -23,12 +21,20 @@
             font-family: 'Inter', sans-serif;
         }
 
-        body {
+        html, body {
             margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
             min-height: 100vh;
             color: #f8fafc;
             background: radial-gradient(circle at top, #1e293b, #020617);
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         canvas {
@@ -40,174 +46,352 @@
         .container {
             position: relative;
             z-index: 1;
-            max-width: 1100px;
-            margin: auto;
-            padding: 40px 20px 80px;
+            width: 100%;
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
         }
-header {
-    position: relative;  /* AJOUTEZ CETTE LIGNE */
-    text-align: center;
-    margin-bottom: 50px;
-    padding-top: 60px;  /* AJOUTEZ CETTE LIGNE pour donner de l'espace au bouton */
-}
+
+        header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 50px;
+            padding-top: 20px;
+        }
 
         header h1 {
-            font-size: 3rem;
+            font-size: 4.5rem;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            margin: 0;
+            color: #38bdf8;
         }
 
         header p {
             color: #cbd5f5;
-            max-width: 750px;
-            margin: 12px auto 0;
-            line-height: 1.7;
-        }
-
-        blockquote {
-            margin: 25px auto 0;
-            font-style: italic;
-            color: #a5f3fc;
-            max-width: 700px;
-            opacity: 0.9;
+            margin: 20px auto 0;
+            line-height: 1.8;
+            font-size: 1.8rem;
         }
 
         .card {
             background: var(--glass);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 40px;
             backdrop-filter: blur(12px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.35);
         }
 
         .card h2 {
-            margin-top: 0;
+            margin: 0 0 30px 0;
             color: var(--accent);
+            font-size: 3rem;
+        }
+
+        .card h3 {
+            font-size: 2rem;
+            color: #e2e8f0;
+            margin: 20px 0 15px 0;
+        }
+
+        .card p {
+            font-size: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
         }
 
         .slider-group {
-            margin-bottom: 25px;
+            margin-bottom: 35px;
         }
 
         .slider-group label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 1.7rem;
         }
 
-        .slider-hint {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-top: 4px;
+        .slider-value {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.8rem;
         }
 
         input[type="range"] {
             width: 100%;
+            height: 14px;
+            border-radius: 7px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
         }
 
-        select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(15,23,42,0.6);
-            color: #f8fafc;
-            font-size: 1rem;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            font-size: 1.1rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #38bdf8, #2563eb);
-            color: white;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 20px rgba(56,189,248,0.8);
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(56,189,248,0.35);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .results {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-            gap: 20px;
-            margin-top: 20px;
+        input[type="range"]::-moz-range-thumb {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(56,189,248,0.8);
+            border: none;
         }
 
         .result-box {
-            background: rgba(15,23,42,0.6);
-            border-radius: 15px;
-            padding: 20px;
+            background: rgba(15,23,42,0.9);
+            border: 3px solid var(--accent);
+            border-radius: 20px;
+            padding: 30px;
             text-align: center;
         }
 
-        .result-box span {
+        .result-box h3 {
+            margin: 0 0 20px 0;
             font-size: 1.8rem;
-            font-weight: 700;
-            color: #38bdf8;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .result-box small {
+        .result-box .value {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        .result-box.success {
+            border-color: var(--success);
+        }
+
+        .result-box.success .value {
+            color: var(--success);
+        }
+
+        button {
+            padding: 20px 40px;
+            border-radius: 15px;
+            border: none;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8, #2563eb);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(56,189,248,0.5);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 15px 30px;
+            background: rgba(56,189,248,0.2);
+            border: 2px solid rgba(56,189,248,0.3);
+            border-radius: 12px;
+            color: #f8fafc;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.4rem;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #020617;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
             display: block;
-            font-size: 0.9rem;
-            color: #94a3b8;
+        }
+
+        .scenario-card {
+            background: rgba(15,23,42,0.8);
+            border: 2px solid rgba(56,189,248,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .scenario-card:hover {
+            background: rgba(56,189,248,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(56,189,248,0.3);
+        }
+
+        .scenario-card div:first-child {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .scenario-card div:nth-child(2) {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .scenario-card div:nth-child(3) {
+            font-size: 1.2rem;
+            font-weight: 700;
             margin-top: 8px;
         }
 
-        .error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            color: #fca5a5;
+        .correlation-matrix {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 30px;
         }
 
-        .info-box {
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            border-radius: 10px;
-            padding: 15px;
+        .correlation-matrix table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1.4rem;
+        }
+
+        .correlation-matrix th,
+        .correlation-matrix td {
+            padding: 25px 20px;
+            text-align: center;
+            border: 3px solid rgba(255,255,255,0.2);
+            background: rgba(15,23,42,0.9);
+        }
+
+        .correlation-matrix th {
+            background: rgba(56,189,248,0.4);
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: #ffffff;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+            font-size: 1.4rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .legend-color {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .octopus-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 20px;
-            line-height: 1.6;
+            overflow: hidden;
+            background: rgba(15,23,42,0.4);
+            border-radius: 20px;
+            border: 2px solid rgba(56,189,248,0.3);
+        }
+
+        .octopus-svg {
+            width: 100%;
+            height: 100%;
         }
 
         footer {
             text-align: center;
-            opacity: 0.6;
-            margin-top: 60px;
-            font-size: 0.9rem;
-        }
-
-      
-
-        .navbar h1 {
             font-size: 1.5rem;
-            margin: 0;
-            color: var(--accent);
-            font-weight: 700;
+            background: rgba(15,23,42,0.98);
+            padding: 35px 30px;
+            border-top: 2px solid rgba(255,255,255,0.15);
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+            backdrop-filter: blur(15px);
+            margin-top: auto;
+            color: #cbd5f5;
         }
 
-        
+        footer p {
+            margin: 10px 0;
+        }
 
-       
+        .interpretation-text {
+            font-size: 1.4rem;
+            line-height: 2;
+            color: #e2e8f0;
+        }
 
-        .container {
-            margin-top: 70px;
+        @media (max-width: 1024px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            header h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
@@ -218,104 +402,714 @@ header {
 
 <div class="container">
 
-   <header>
-    <button onclick="goToWelcome()" style="position: absolute; top: 20px; left: 20px; padding: 8px 16px; background: rgba(56,189,248,0.2); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; width: auto;">
-        ← Back to Welcome
-    </button>
-    
-    <h1 style="margin: 0;">NashShield</h1>
-    
-    <p>
-        An interactive platform for risk sharing analysis combining
-        <b>Brownian motion</b>, <b>Monte Carlo simulation</b> and
-        <b>Nash equilibrium</b> within insurance and reinsurance frameworks.
-    </p>
+    <header>
+        <h1>📊 SCR Calculator - Pillar I</h1>
+        <p>Solvency Capital Requirement - Interactive Simulator</p>
+    </header>
 
-    <blockquote>
-        "Randomness is not chaos — it is structure waiting to be understood."
-    </blockquote>
-</header>
+    <!-- Main Grid -->
+    <div class="grid-2">
 
-    <!-- INTRODUCTION -->
-    <div class="card">
-     
+        <!-- Left Column: Risk Modules -->
+        <div class="card">
+            <h2>⚙️ Risk Modules</h2>
+            <p style="font-size: 1.4rem; color: #cbd5f5; margin-bottom: 30px;">
+                Adjust risk exposures. BSCR uses correlation matrix for diversification.
+            </p>
+
+            <div class="slider-group">
+                <label>
+                    <span>📈 Market Risk</span>
+                    <span class="slider-value" id="market-value">50M €</span>
+                </label>
+                <input type="range" id="market" min="0" max="200" value="50" step="5" oninput="updateSliders()">
+            </div>
+
+            <div class="slider-group">
+                <label>
+                    <span>👤 Life Underwriting</span>
+                    <span class="slider-value" id="life-value">30M €</span>
+                </label>
+                <input type="range" id="life" min="0" max="200" value="30" step="5" oninput="updateSliders()">
+            </div>
+
+            <div class="slider-group">
+                <label>
+                    <span>🏥 Health Underwriting</span>
+                    <span class="slider-value" id="health-value">20M €</span>
+                </label>
+                <input type="range" id="health" min="0" max="150" value="20" step="5" oninput="updateSliders()">
+            </div>
+
+            <div class="slider-group">
+                <label>
+                    <span>🏢 Non-Life Underwriting</span>
+                    <span class="slider-value" id="nonlife-value">40M €</span>
+                </label>
+                <input type="range" id="nonlife" min="0" max="250" value="40" step="5" oninput="updateSliders()">
+            </div>
+
+            <div class="slider-group">
+                <label>
+                    <span>🤝 Counterparty Default</span>
+                    <span class="slider-value" id="counterparty-value">10M €</span>
+                </label>
+                <input type="range" id="counterparty" min="0" max="100" value="10" step="2" oninput="updateSliders()">
+            </div>
+
+            <div class="slider-group">
+                <label>
+                    <span>⚙️ Operational Risk</span>
+                    <span class="slider-value" id="operational-value">15M €</span>
+                </label>
+                <input type="range" id="operational" min="0" max="100" value="15" step="2" oninput="updateSliders()">
+            </div>
+
+            <!-- Info Box -->
+            <div style="background: rgba(56,189,248,0.15); border: 2px solid rgba(56,189,248,0.4); border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                <div style="font-size: 1.8rem; color: #38bdf8; font-weight: 700; margin-bottom: 15px;">📋 HOW IT WORKS</div>
+                <div style="font-size: 1.3rem; color: #cbd5f5; line-height: 1.8;">
+                    <div style="margin-bottom: 10px;">🎯 <strong>Risk Modules:</strong> Adjust each risk category</div>
+                    <div style="margin-bottom: 10px;">🔗 <strong>Correlation:</strong> Custom matrix reduces aggregated risk</div>
+                    <div style="margin-bottom: 10px;">📊 <strong>BSCR:</strong> Aggregated base capital requirement</div>
+                    <div>⚡ <strong>SCR:</strong> Total capital with operational risk</div>
+                </div>
+            </div>
+
+            <button onclick="calculateAndUpdate()">🔄 CALCULATE SCR</button>
+
+            <!-- Tips Box -->
+            <div style="background: rgba(34,197,94,0.12); border: 2px solid rgba(34,197,94,0.4); border-radius: 15px; padding: 25px; margin-top: 20px;">
+                <div style="font-size: 1.8rem; color: #22c55e; font-weight: 700; margin-bottom: 15px;">💡 QUICK TIPS</div>
+                <div style="font-size: 1.3rem; color: #cbd5f5; line-height: 1.8;">
+                    <div style="margin-bottom: 12px;">✓ Move sliders to test different risk exposures</div>
+                    <div style="margin-bottom: 12px;">✓ Click "Calculate SCR" to see results update</div>
+                    <div style="margin-bottom: 12px;">✓ Watch the Octopus - tentacles grow with risk</div>
+                    <div style="margin-bottom: 12px;">✓ Try shock scenarios to stress-test portfolio</div>
+                    <div>✓ Check correlation matrix for diversification benefits</div>
+                </div>
+            </div>
+
+            <!-- Diversification Insights Box -->
+            <div style="background: rgba(245,158,11,0.12); border: 2px solid rgba(245,158,11,0.4); border-radius: 15px; padding: 25px; margin-top: 20px;">
+                <div style="font-size: 1.8rem; color: #f59e0b; font-weight: 700; margin-bottom: 20px;">🎯 DIVERSIFICATION INSIGHTS</div>
+                <div style="font-size: 1.3rem; color: #cbd5f5; line-height: 1.9;">
+                    <div style="margin-bottom: 15px;"><strong style="color: #fbbf24;">→ Balance Your Portfolio:</strong> Spread risk across different modules to reduce total SCR through diversification benefits</div>
+                    <div style="margin-bottom: 15px;"><strong style="color: #fbbf24;">→ Reduce Operational Risk:</strong> Lower Op Risk exposure - it adds directly to BSCR with no diversification benefit</div>
+                    <div style="margin-bottom: 15px;"><strong style="color: #fbbf24;">→ Exploit Correlations:</strong> Modules with low correlation (like market & health) reduce BSCR more effectively</div>
+                    <div style="margin-bottom: 15px;"><strong style="color: #fbbf24;">→ Test Scenarios:</strong> Use shock tabs to identify vulnerabilities and stress test your portfolio</div>
+                    <div style="margin-bottom: 15px;"><strong style="color: #fbbf24;">→ Monitor Life Risk:</strong> Life module has highest single impact - consider hedging strategies</div>
+                    <div><strong style="color: #fbbf24;">→ Check the Matrix:</strong> Correlation matrix shows which risk pairs benefit most from diversification</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Results -->
+        <div style="display: flex; flex-direction: column; gap: 40px;">
+            
+            <!-- Octopus Visualization -->
+            <div class="card">
+                <h2>🐙 Octopus Visualization</h2>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background: #3b82f6;"></div><span>Market</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div><span>Life</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #f59e0b;"></div><span>Health</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div><span>Non-Life</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #8b5cf6;"></div><span>Counterparty</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: #ec4899;"></div><span>Operational</span></div>
+                </div>
+                <div class="octopus-container" id="octopus"></div>
+            </div>
+
+            <!-- Results -->
+            <div class="card">
+                <h2>📊 Results</h2>
+                <div class="grid-3">
+                    <div class="result-box">
+                        <h3>BSCR</h3>
+                        <div class="value" id="bscr-result">98.5M €</div>
+                    </div>
+                    <div class="result-box">
+                        <h3>Op Risk</h3>
+                        <div class="value" id="oprisk-result">15M €</div>
+                    </div>
+                    <div class="result-box success">
+                        <h3>SCR Total</h3>
+                        <div class="value" id="scr-result">113.5M €</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 25px; background: rgba(56,189,248,0.12); border-radius: 15px; border: 2px solid rgba(56,189,248,0.3); font-size: 1.4rem; color: #cbd5f5;">
+                    <strong style="color: var(--accent); font-size: 1.6rem;">📐 FORMULA:</strong><br style="margin: 10px 0;">
+                    BSCR = √(Σ Σ ρ<sub>i,j</sub> × SCR<sub>i</sub> × SCR<sub>j</sub>)<br style="margin: 5px 0;">
+                    <strong style="color: var(--accent); font-size: 1.6rem; margin-top: 15px; display: block;">SCR Total = BSCR + Op Risk</strong>
+                </div>
+
+                <!-- Shock Tabs -->
+                <h3 style="margin-top: 40px; margin-bottom: 20px;">⚡ SHOCK SCENARIOS</h3>
+                <div class="tabs" style="flex-wrap: wrap;">
+                    <button class="tab-btn active" onclick="switchQuickTab('market-quick', event)">📈 Market</button>
+                    <button class="tab-btn" onclick="switchQuickTab('life-quick', event)">👤 Life</button>
+                    <button class="tab-btn" onclick="switchQuickTab('health-quick', event)">🏥 Health</button>
+                    <button class="tab-btn" onclick="switchQuickTab('nonlife-quick', event)">🏢 Non-Life</button>
+                    <button class="tab-btn" onclick="switchQuickTab('combined-quick', event)">⚡ Combined</button>
+                </div>
+
+                <!-- Market Scenarios -->
+                <div id="market-quick" class="tab-content active" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <div class="scenario-card" onclick="applyScenario('market_interest_up')"><div>📈</div><div>Interest +100bp</div><div style="color: #94a3b8;">+8.5%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('market_interest_down')"><div>📉</div><div>Interest -100bp</div><div style="color: #94a3b8;">+7.2%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('market_equity_crash')"><div>🔴</div><div>Equity Crash</div><div style="color: #94a3b8;">+12.3%</div></div>
+                </div>
+
+                <!-- Life Scenarios -->
+                <div id="life-quick" class="tab-content" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <div class="scenario-card" onclick="applyScenario('life_mortality_shock')"><div>💀</div><div>Mortality Spike</div><div style="color: #94a3b8;">+4.2%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('life_longevity_shock')"><div>🧓</div><div>Longevity Shock</div><div style="color: #94a3b8;">+5.8%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('life_lapse_shock')"><div>📊</div><div>Lapse Shock</div><div style="color: #94a3b8;">+3.5%</div></div>
+                </div>
+
+                <!-- Health Scenarios -->
+                <div id="health-quick" class="tab-content" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <div class="scenario-card" onclick="applyScenario('health_pandemic')"><div>🦠</div><div>Pandemic</div><div style="color: #ef4444; font-size: 1.3rem;">+18.5%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('health_premium_increase')"><div>💰</div><div>Premium Increase</div><div style="color: #94a3b8;">+8.3%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('health_claim_inflation')"><div>📈</div><div>Claim Inflation</div><div style="color: #94a3b8;">+6.7%</div></div>
+                </div>
+
+                <!-- Non-Life Scenarios -->
+                <div id="nonlife-quick" class="tab-content" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <div class="scenario-card" onclick="applyScenario('nonlife_nat_cat')"><div>⛈️</div><div>Nat. Catastrophe</div><div style="color: #ef4444; font-size: 1.3rem;">+22.5%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('nonlife_man_cat')"><div>🏭</div><div>Man-Made Cat.</div><div style="color: #ef4444; font-size: 1.3rem;">+18.9%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('nonlife_claims_inflation')"><div>📊</div><div>Claims Inflation</div><div style="color: #94a3b8;">+9.4%</div></div>
+                </div>
+
+                <!-- Combined Scenarios -->
+                <div id="combined-quick" class="tab-content" style="display: none; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div class="scenario-card" onclick="applyScenario('combined_financial_crisis')"><div>🌍</div><div>Financial Crisis</div><div style="color: #ef4444; font-size: 1.3rem;">+35.2%</div></div>
+                    <div class="scenario-card" onclick="applyScenario('combined_worst_case')"><div>🚨</div><div>Worst Case</div><div style="color: #ef4444; font-size: 1.3rem;">+45.1%</div></div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-    <!-- CLAIM PARAMETERS -->
+    <!-- Analysis & Scenario Details -->
+    <div class="grid-2">
+        <div class="card">
+            <h2>📖 Analysis</h2>
+            <div id="interpretation-content" class="interpretation-text">
+                Your baseline portfolio shows balanced risk exposure. Adjust sliders and click Recalculate SCR to update.
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚡ Scenario Details</h2>
+            <div id="scenario-details" class="interpretation-text">
+                <p>Select a shock scenario to view analysis and impact breakdown.</p>
+                <div style="margin-top: 20px; padding: 20px; background: rgba(56,189,248,0.1); border-radius: 12px; border-left: 4px solid var(--accent);">
+                    <strong style="color: var(--accent); font-size: 1.3rem;">💡 Tip:</strong><br style="margin: 8px 0;">
+                    Test scenarios to see how market and operational shocks affect capital requirements.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Correlation Matrix Section - AT THE END -->
     <div class="card">
+        <h2>🔗 Correlation Matrix</h2>
+        <p style="font-size: 1.4rem; color: #cbd5f5; margin-bottom: 20px;">
+            Shows risk dependencies. Values ≈ 1 = strong correlation. Lower values = diversification benefits.
+        </p>
         
+        <div class="correlation-matrix">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Risk Module</th>
+                        <th>📈 Market</th>
+                        <th>🤝 Counterparty</th>
+                        <th>👤 Life</th>
+                        <th>🏥 Health</th>
+                        <th>🏢 Non-Life</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(59, 130, 246, 0.15);">
+                        <td style="text-align: left; font-weight: 700; font-size: 1.3rem;">📈 Market</td>
+                        <td style="background: rgba(34, 197, 94, 0.3); font-weight: 700; font-size: 1.5rem;">1.000</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: 700; font-size: 1.3rem;">🤝 Counterparty</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="background: rgba(34, 197, 94, 0.3); font-weight: 700; font-size: 1.5rem;">1.000</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="background: rgba(239, 68, 68, 0.3); font-weight: 700; font-size: 1.5rem;">0.500</td>
+                    </tr>
+                    <tr style="background: rgba(16, 185, 129, 0.15);">
+                        <td style="text-align: left; font-weight: 700; font-size: 1.3rem;">👤 Life</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="background: rgba(34, 197, 94, 0.3); font-weight: 700; font-size: 1.5rem;">1.000</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="background: rgba(100, 116, 139, 0.5); font-weight: 700; font-size: 1.5rem;">0.000</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: 700; font-size: 1.3rem;">🏥 Health</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="background: rgba(34, 197, 94, 0.3); font-weight: 700; font-size: 1.5rem;">1.000</td>
+                        <td style="background: rgba(100, 116, 139, 0.5); font-weight: 700; font-size: 1.5rem;">0.000</td>
+                    </tr>
+                    <tr style="background: rgba(239, 68, 68, 0.15);">
+                        <td style="text-align: left; font-weight: 700; font-size: 1.3rem;">🏢 Non-Life</td>
+                        <td style="font-size: 1.5rem;">0.250</td>
+                        <td style="background: rgba(239, 68, 68, 0.3); font-weight: 700; font-size: 1.5rem;">0.500</td>
+                        <td style="background: rgba(100, 116, 139, 0.5); font-weight: 700; font-size: 1.5rem;">0.000</td>
+                        <td style="background: rgba(100, 116, 139, 0.5); font-weight: 700; font-size: 1.5rem;">0.000</td>
+                        <td style="background: rgba(34, 197, 94, 0.3); font-weight: 700; font-size: 1.5rem;">1.000</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- STRATEGIES -->
-    <div class="card">
-       
-    </div>
+</div>
 
-    <!-- RESULTS -->
-    <div class="card">
-        
-    </div>
-
-     <footer>
-        <p>NashShield © 2026 | For Educational Purposes Only</p>
-        <p>Built with Python • Flask • Game Theory • Insurance Expertise</p>
-    </footer>   
+<footer>
+    <p>NashShield © 2026 | SCR Calculator for Educational Purposes</p>
+    <p>Built with Python • Flask • Solvency II Compliance</p>
+</footer>
 
 <script>
+    // Colored Particle Animation
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let w, h, particles = [];
+    
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#6366f1'];
 
+    function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+    }
+    window.onresize = resize;
+    resize();
 
+    for (let i = 0; i < 150; i++) {
+        particles.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: Math.random() * 2.5 + 1,
+            dx: (Math.random() - 0.5) * 0.4,
+            dy: (Math.random() - 0.5) * 0.4,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            opacity: Math.random() * 0.6 + 0.2
+        });
+    }
 
+    function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => {
+            ctx.fillStyle = p.color + Math.floor(p.opacity * 255).toString(16).padStart(2, '0');
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+            p.x += p.dx;
+            p.y += p.dy;
+            if (p.x < 0 || p.x > w) p.dx *= -1;
+            if (p.y < 0 || p.y > h) p.dy *= -1;
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
 
-   
+    // Current values
+    let currentValues = { market: 50, life: 30, health: 20, nonlife: 40, counterparty: 10, operational: 15 };
+    let currentSCRResult = null;
 
+    function updateSliders() {
+        currentValues.market = parseFloat(document.getElementById('market').value);
+        currentValues.life = parseFloat(document.getElementById('life').value);
+        currentValues.health = parseFloat(document.getElementById('health').value);
+        currentValues.nonlife = parseFloat(document.getElementById('nonlife').value);
+        currentValues.counterparty = parseFloat(document.getElementById('counterparty').value);
+        currentValues.operational = parseFloat(document.getElementById('operational').value);
 
-// Particles animation (pollen-like diffusion)
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-let w, h, particles = [];
+        document.getElementById('market-value').textContent = currentValues.market + 'M €';
+        document.getElementById('life-value').textContent = currentValues.life + 'M €';
+        document.getElementById('health-value').textContent = currentValues.health + 'M €';
+        document.getElementById('nonlife-value').textContent = currentValues.nonlife + 'M €';
+        document.getElementById('counterparty-value').textContent = currentValues.counterparty + 'M €';
+        document.getElementById('operational-value').textContent = currentValues.operational + 'M €';
 
-function resize() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-}
-window.onresize = resize;
-resize();
+        drawOctopus();
+    }
 
-for (let i = 0; i < 120; i++) {
-    particles.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
-    });
-}
-
-function animate() {
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
-    particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-        p.x += p.dx;
-        p.y += p.dy;
-        if (p.x < 0 || p.x > w || p.y < 0 || p.y > h) {
-            p.x = Math.random() * w;
-            p.y = Math.random() * h;
+    async function calculateAndUpdate() {
+        try {
+            const response = await fetch('/api/scr/calculate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(currentValues)
+            });
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                alert('Error: ' + result.error);
+                return;
+            }
+            
+            currentSCRResult = result.data;
+            
+            document.getElementById('bscr-result').textContent = result.data.bscr + 'M €';
+            document.getElementById('oprisk-result').textContent = result.data.operational + 'M €';
+            document.getElementById('scr-result').textContent = result.data.scr + 'M €';
+            
+            updateBaselineInterpretations(result.data);
+            drawOctopus();
+            
+        } catch (error) {
+            console.error('Calculation error:', error);
+            alert('Error calculating SCR: ' + error.message);
         }
-    });
-    requestAnimationFrame(animate);
-}
-animate();
+    }
 
-// Initial plot on load (optional)
-plotBrownian();
+    function updateBaselineInterpretations(scrData) {
+        const riskTotal = currentValues.market + currentValues.life + currentValues.health + currentValues.nonlife + currentValues.counterparty;
+        const diversificationBenefit = riskTotal - scrData.bscr;
+        const diversificationPct = (diversificationBenefit / riskTotal * 100).toFixed(1);
+        
+        let assessment = 'Moderate';
+        if (scrData.scr < 80) assessment = '✅ LOW RISK';
+        else if (scrData.scr < 150) assessment = '⚠️ MODERATE RISK';
+        else assessment = '🚨 HIGH RISK';
+        
+        let html = `<strong style="color: #38bdf8; font-size: 1.8rem;">📊 ASSESSMENT: ${assessment}</strong><br><br>`;
+        html += `<strong style="color: #e2e8f0; font-size: 1.5rem;">SCR BREAKDOWN:</strong><br style="margin: 8px 0;">`;
+        html += `• BSCR (with correlations): <strong style="font-size: 1.6rem;">${scrData.bscr}M €</strong><br>`;
+        html += `• Operational Risk: <strong style="font-size: 1.6rem;">${scrData.operational}M €</strong><br>`;
+        html += `• <strong style="color: #22c55e; font-size: 1.7rem;">Total SCR: ${scrData.scr}M €</strong><br><br>`;
+        html += `<strong style="color: #e2e8f0; font-size: 1.5rem;">DIVERSIFICATION:</strong><br style="margin: 8px 0;">`;
+        html += `• Total risk (no correlation): ${riskTotal}M €<br>`;
+        html += `• Diversification benefit: <strong style="color: #22c55e; font-size: 1.5rem;">+${diversificationBenefit.toFixed(2)}M € (${diversificationPct}%)</strong>`;
+        
+        document.getElementById('interpretation-content').innerHTML = html;
+    }
 
-// Navigation function
-function goToWelcome() {
-    window.location.href = '/welcome';
-}
+    async function applyScenario(scenario) {
+        try {
+            const response = await fetch('/api/scr/shock', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({...currentValues, scenario: scenario})
+            });
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                alert('Error: ' + result.error);
+                return;
+            }
+            
+            const data = result.data;
+            const impactPct = Math.abs(data.impact_pct);
+            let riskLevel = '⚠️ MODERATE';
+            if (impactPct < 5) riskLevel = '✅ LOW';
+            else if (impactPct < 15) riskLevel = '⚠️ MODERATE';
+            else if (impactPct < 30) riskLevel = '🔴 HIGH';
+            else riskLevel = '🚨 CRITICAL';
+            
+            let scenarioName = scenario.replace(/_/g, ' ').toUpperCase();
+            
+            let html = `<strong style="color: #38bdf8; font-size: 1.8rem;">⚡ ${scenarioName}</strong><br>`;
+            html += `<strong style="color: #e2e8f0; font-size: 1.6rem;">IMPACT: ${riskLevel}</strong><br><br>`;
+            html += `<strong style="color: #e2e8f0; font-size: 1.5rem;">CAPITAL IMPACT:</strong><br style="margin: 8px 0;">`;
+            html += `• Baseline SCR: <strong style="font-size: 1.5rem;">${data.original_scr}M €</strong><br>`;
+            html += `• Stressed SCR: <strong style="font-size: 1.6rem;">${data.stressed_scr}M €</strong><br>`;
+            html += `• Change: <strong style="color: ${data.impact_pct > 0 ? '#ef4444' : '#22c55e'}; font-size: 1.6rem;">${data.impact_pct > 0 ? '+' : ''}${data.impact_amount}M € (${data.impact_pct > 0 ? '+' : ''}${data.impact_pct}%)</strong><br><br>`;
+            html += `<strong style="color: #e2e8f0; font-size: 1.5rem;">STRESSED VALUES:</strong><br style="margin: 8px 0;">`;
+            html += `• Market: ${data.stressed_values.market}M € | Life: ${data.stressed_values.life}M €<br>`;
+            html += `• Health: ${data.stressed_values.health}M € | Non-Life: ${data.stressed_values.nonlife}M €<br>`;
+            html += `• Counterparty: ${data.stressed_values.counterparty}M €`;
+            
+            document.getElementById('scenario-details').innerHTML = html;
+            
+        } catch (error) {
+            console.error('Scenario error:', error);
+            alert('Error applying scenario: ' + error.message);
+        }
+    }
+
+    function switchQuickTab(tab, event) {
+        document.querySelectorAll('.tab-content').forEach(el => {
+            el.style.display = 'none';
+        });
+        const element = document.getElementById(tab);
+        if (element) {
+            element.style.display = 'grid';
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    function drawOctopus() {
+        const container = document.getElementById('octopus');
+        container.innerHTML = '';
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.setAttribute('viewBox', '0 0 800 600');
+        svg.setAttribute('class', 'octopus-svg');
+        svg.setAttribute('style', 'filter: drop-shadow(0 0 30px rgba(59,130,246,0.6));');
+
+        const centerX = 400, centerY = 300;
+        const defs = document.createElementNS(svgNS, 'defs');
+        svg.appendChild(defs);
+
+        // Create radial gradient for body glow
+        const bodyGrad = document.createElementNS(svgNS, 'radialGradient');
+        bodyGrad.setAttribute('id', 'bodyGrad');
+        const bgStop1 = document.createElementNS(svgNS, 'stop');
+        bgStop1.setAttribute('offset', '0%');
+        bgStop1.setAttribute('stop-color', '#38bdf8');
+        bgStop1.setAttribute('stop-opacity', '1');
+        const bgStop2 = document.createElementNS(svgNS, 'stop');
+        bgStop2.setAttribute('offset', '70%');
+        bgStop2.setAttribute('stop-color', '#0ea5e9');
+        bgStop2.setAttribute('stop-opacity', '0.8');
+        const bgStop3 = document.createElementNS(svgNS, 'stop');
+        bgStop3.setAttribute('offset', '100%');
+        bgStop3.setAttribute('stop-color', '#06b6d4');
+        bgStop3.setAttribute('stop-opacity', '0.6');
+        bodyGrad.appendChild(bgStop1);
+        bodyGrad.appendChild(bgStop2);
+        bodyGrad.appendChild(bgStop3);
+        defs.appendChild(bodyGrad);
+
+        const risks = [
+            {name: 'Market', value: currentValues.market, angle: -90, color: '#3b82f6', maxVal: 200},
+            {name: 'Life', value: currentValues.life, angle: -30, color: '#10b981', maxVal: 200},
+            {name: 'Health', value: currentValues.health, angle: 30, color: '#f59e0b', maxVal: 150},
+            {name: 'Non-Life', value: currentValues.nonlife, angle: 90, color: '#ef4444', maxVal: 250},
+            {name: 'Counterparty', value: currentValues.counterparty, angle: 150, color: '#8b5cf6', maxVal: 100},
+            {name: 'Operational', value: currentValues.operational, angle: 210, color: '#ec4899', maxVal: 100}
+        ];
+
+        // Draw tentacles with improved styling
+        risks.forEach((risk, idx) => {
+            const rad = (risk.angle * Math.PI) / 180;
+            const length = 120 + (risk.value / risk.maxVal) * 160;
+            const endX = centerX + length * Math.cos(rad);
+            const endY = centerY + length * Math.sin(rad);
+
+            // Tentacle shadow/glow
+            const shadowLine = document.createElementNS(svgNS, 'line');
+            shadowLine.setAttribute('x1', centerX);
+            shadowLine.setAttribute('y1', centerY);
+            shadowLine.setAttribute('x2', endX);
+            shadowLine.setAttribute('y2', endY);
+            shadowLine.setAttribute('stroke', risk.color);
+            shadowLine.setAttribute('stroke-width', '26');
+            shadowLine.setAttribute('stroke-linecap', 'round');
+            shadowLine.setAttribute('opacity', '0.15');
+            svg.appendChild(shadowLine);
+
+            // Main tentacle line
+            const gradId = 'grad' + idx;
+            const grad = document.createElementNS(svgNS, 'linearGradient');
+            grad.setAttribute('id', gradId);
+            grad.setAttribute('x1', '0%');
+            grad.setAttribute('y1', '0%');
+            grad.setAttribute('x2', '100%');
+            grad.setAttribute('y2', '0%');
+            const stop1 = document.createElementNS(svgNS, 'stop');
+            stop1.setAttribute('offset', '0%');
+            stop1.setAttribute('stop-color', risk.color);
+            stop1.setAttribute('stop-opacity', '1');
+            const stop2 = document.createElementNS(svgNS, 'stop');
+            stop2.setAttribute('offset', '100%');
+            stop2.setAttribute('stop-color', risk.color);
+            stop2.setAttribute('stop-opacity', '0.4');
+            grad.appendChild(stop1);
+            grad.appendChild(stop2);
+            defs.appendChild(grad);
+
+            const line = document.createElementNS(svgNS, 'line');
+            line.setAttribute('x1', centerX);
+            line.setAttribute('y1', centerY);
+            line.setAttribute('x2', endX);
+            line.setAttribute('y2', endY);
+            line.setAttribute('stroke', `url(#${gradId})`);
+            line.setAttribute('stroke-width', '18');
+            line.setAttribute('stroke-linecap', 'round');
+            line.setAttribute('style', `filter: drop-shadow(0 0 8px ${risk.color}80);`);
+            svg.appendChild(line);
+
+            // Suction cups along tentacle
+            const cupCount = Math.floor(length / 30);
+            for (let cup = 1; cup <= cupCount; cup++) {
+                const cupRatio = cup / (cupCount + 1);
+                const cupX = centerX + length * cupRatio * Math.cos(rad);
+                const cupY = centerY + length * cupRatio * Math.sin(rad);
+                const cupSize = 5 + (risk.value / risk.maxVal) * 4;
+
+                const cupCircle = document.createElementNS(svgNS, 'circle');
+                cupCircle.setAttribute('cx', cupX);
+                cupCircle.setAttribute('cy', cupY);
+                cupCircle.setAttribute('r', cupSize);
+                cupCircle.setAttribute('fill', risk.color);
+                cupCircle.setAttribute('opacity', '0.6');
+                svg.appendChild(cupCircle);
+
+                const cupHighlight = document.createElementNS(svgNS, 'circle');
+                cupHighlight.setAttribute('cx', cupX - cupSize * 0.4);
+                cupHighlight.setAttribute('cy', cupY - cupSize * 0.4);
+                cupHighlight.setAttribute('r', cupSize * 0.3);
+                cupHighlight.setAttribute('fill', '#ffffff');
+                cupHighlight.setAttribute('opacity', '0.3');
+                svg.appendChild(cupHighlight);
+            }
+
+            // Labels with enhanced styling
+            const labelBg = document.createElementNS(svgNS, 'rect');
+            labelBg.setAttribute('x', endX + 20);
+            labelBg.setAttribute('y', endY - 25);
+            labelBg.setAttribute('width', '190');
+            labelBg.setAttribute('height', '70');
+            labelBg.setAttribute('rx', '12');
+            labelBg.setAttribute('fill', 'rgba(15,23,42,0.98)');
+            labelBg.setAttribute('stroke', risk.color);
+            labelBg.setAttribute('stroke-width', '2.5');
+            labelBg.setAttribute('style', `filter: drop-shadow(0 0 12px ${risk.color}40);`);
+            svg.appendChild(labelBg);
+
+            const label = document.createElementNS(svgNS, 'text');
+            label.setAttribute('x', endX + 35);
+            label.setAttribute('y', endY - 2);
+            label.setAttribute('fill', risk.color);
+            label.setAttribute('font-size', '26');
+            label.setAttribute('font-weight', 'bold');
+            label.setAttribute('font-family', 'Arial, sans-serif');
+            label.textContent = `${risk.name}`;
+            svg.appendChild(label);
+
+            const value = document.createElementNS(svgNS, 'text');
+            value.setAttribute('x', endX + 35);
+            value.setAttribute('y', endY + 28);
+            value.setAttribute('fill', '#cbd5f5');
+            value.setAttribute('font-size', '24');
+            value.setAttribute('font-weight', 'bold');
+            value.setAttribute('font-family', 'Arial, sans-serif');
+            value.textContent = `${risk.value}M €`;
+            svg.appendChild(value);
+        });
+
+        // Universe pollen background - across entire frame
+        const pollenColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#fbbf24', '#34d399'];
+        for (let p = 0; p < 200; p++) {
+            const pollenX = Math.random() * 800;
+            const pollenY = Math.random() * 600;
+            const pollenSize = 0.3 + Math.random() * 1.5;
+            const pollenColor = pollenColors[Math.floor(Math.random() * pollenColors.length)];
+            
+            const pollen = document.createElementNS(svgNS, 'circle');
+            pollen.setAttribute('cx', pollenX);
+            pollen.setAttribute('cy', pollenY);
+            pollen.setAttribute('r', pollenSize);
+            pollen.setAttribute('fill', pollenColor);
+            pollen.setAttribute('opacity', Math.random() * 0.6 + 0.15);
+            svg.appendChild(pollen);
+        }
+
+        // Enhanced glow layers
+        const glowLayer2 = document.createElementNS(svgNS, 'circle');
+        glowLayer2.setAttribute('cx', centerX);
+        glowLayer2.setAttribute('cy', centerY);
+        glowLayer2.setAttribute('r', '95');
+        glowLayer2.setAttribute('fill', 'none');
+        glowLayer2.setAttribute('stroke', '#38bdf8');
+        glowLayer2.setAttribute('stroke-width', '2');
+        glowLayer2.setAttribute('opacity', '0.2');
+        svg.appendChild(glowLayer2);
+
+        const glowLayer1 = document.createElementNS(svgNS, 'circle');
+        glowLayer1.setAttribute('cx', centerX);
+        glowLayer1.setAttribute('cy', centerY);
+        glowLayer1.setAttribute('r', '85');
+        glowLayer1.setAttribute('fill', '#38bdf8');
+        glowLayer1.setAttribute('opacity', '0.08');
+        svg.appendChild(glowLayer1);
+
+        // Octopus body with gradient
+        const circle = document.createElementNS(svgNS, 'circle');
+        circle.setAttribute('cx', centerX);
+        circle.setAttribute('cy', centerY);
+        circle.setAttribute('r', '65');
+        circle.setAttribute('fill', 'url(#bodyGrad)');
+        circle.setAttribute('stroke', '#0ea5e9');
+        circle.setAttribute('stroke-width', '3');
+        circle.setAttribute('style', 'filter: drop-shadow(0 0 15px rgba(59,130,246,0.8));');
+        svg.appendChild(circle);
+
+        // Eyes with shine effect
+        const eyes = [
+            {x: centerX - 18, y: centerY - 15},
+            {x: centerX + 18, y: centerY - 15}
+        ];
+        
+        eyes.forEach(eye => {
+            // Eye background
+            const eyeBg = document.createElementNS(svgNS, 'circle');
+            eyeBg.setAttribute('cx', eye.x);
+            eyeBg.setAttribute('cy', eye.y);
+            eyeBg.setAttribute('r', '11');
+            eyeBg.setAttribute('fill', '#ffffff');
+            eyeBg.setAttribute('opacity', '0.9');
+            svg.appendChild(eyeBg);
+
+            // Pupil
+            const pupil = document.createElementNS(svgNS, 'circle');
+            pupil.setAttribute('cx', eye.x);
+            pupil.setAttribute('cy', eye.y);
+            pupil.setAttribute('r', '6');
+            pupil.setAttribute('fill', '#020617');
+            svg.appendChild(pupil);
+
+            // Eye shine
+            const shine = document.createElementNS(svgNS, 'circle');
+            shine.setAttribute('cx', eye.x - 3);
+            shine.setAttribute('cy', eye.y - 3);
+            shine.setAttribute('r', '3');
+            shine.setAttribute('fill', '#ffffff');
+            shine.setAttribute('opacity', '0.8');
+            svg.appendChild(shine);
+        });
+
+        // Mouth
+        const mouth = document.createElementNS(svgNS, 'path');
+        mouth.setAttribute('d', `M ${centerX - 12} ${centerY + 20} Q ${centerX} ${centerY + 28} ${centerX + 12} ${centerY + 20}`);
+        mouth.setAttribute('stroke', '#0ea5e9');
+        mouth.setAttribute('stroke-width', '3');
+        mouth.setAttribute('fill', 'none');
+        mouth.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(mouth);
+
+        container.appendChild(svg);
+    }
+
+    updateSliders();
+    calculateAndUpdate();
 </script>
 
 </body>

@@ -4,6 +4,7 @@ from backend.simulation import simulation_3_insurers, simulation_3_insurers_diff
 from backend.nash import nash_equilibrium_3_insurers, nash_equilibrium_3_insurers_different_premiums
 import numpy as np
 import os
+import math
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,6 +20,125 @@ mu = 0.05
 sigma = 0.2
 T = 1
 N = 1000  # Reduced from 10000 for better performance
+
+
+# ===== SCR CALCULATION FUNCTIONS =====
+
+class SCRCalculator:
+    """Solvency Capital Requirement Calculator using Solvency II Standard Formula"""
+    
+    # Correlation matrix from custom specification (Marche, Contrepartie, Vie, Sante, Non Vie)
+    CORRELATION_MATRIX = {
+        'market': {'market': 1.0, 'counterparty': 0.25, 'life': 0.25, 'health': 0.25, 'nonlife': 0.25},
+        'counterparty': {'market': 0.25, 'counterparty': 1.0, 'life': 0.25, 'health': 0.25, 'nonlife': 0.5},
+        'life': {'market': 0.25, 'counterparty': 0.25, 'life': 1.0, 'health': 0.25, 'nonlife': 0.0},
+        'health': {'market': 0.25, 'counterparty': 0.25, 'life': 0.25, 'health': 1.0, 'nonlife': 0.0},
+        'nonlife': {'market': 0.25, 'counterparty': 0.5, 'life': 0.0, 'health': 0.0, 'nonlife': 1.0}
+    }
+    
+    # Shock impact multipliers
+    SHOCK_IMPACTS = {
+        'market_interest_up': {'market': 1.085},
+        'market_interest_down': {'market': 1.072},
+        'market_equity_crash': {'market': 1.123},
+        'market_property_decline': {'market': 1.068},
+        'market_spread_widening': {'market': 1.091},
+        'market_fx_volatility': {'market': 1.054},
+        'life_mortality_shock': {'life': 1.042},
+        'life_longevity_shock': {'life': 1.058},
+        'life_lapse_shock': {'life': 1.035},
+        'life_expense_shock': {'life': 1.021},
+        'health_pandemic': {'health': 1.185},
+        'health_premium_increase': {'health': 1.083},
+        'health_claim_inflation': {'health': 1.067},
+        'nonlife_nat_cat': {'nonlife': 1.225},
+        'nonlife_man_cat': {'nonlife': 1.189},
+        'nonlife_claims_inflation': {'nonlife': 1.094},
+        'nonlife_reserve_shock': {'nonlife': 1.071},
+        'combined_financial_crisis': {
+            'market': 1.352, 'life': 1.125, 'health': 1.089, 'nonlife': 1.145, 'counterparty': 1.178
+        },
+        'combined_stress_test': {
+            'market': 1.287, 'life': 1.089, 'health': 1.067, 'nonlife': 1.098, 'counterparty': 1.112
+        },
+        'combined_worst_case': {
+            'market': 1.451, 'life': 1.256, 'health': 1.198, 'nonlife': 1.289, 'counterparty': 1.267
+        }
+    }
+    
+    @staticmethod
+    def calculate_bscr(risk_values):
+        """
+        Calculate BSCR using custom correlation matrix formula.
+        BSCR = √(Σ Σ ρ(i,j) × SCR(i) × SCR(j))
+        """
+        risks = ['market', 'life', 'health', 'nonlife', 'counterparty']
+        bscr_squared = 0
+        
+        for i in risks:
+            for j in risks:
+                rho = SCRCalculator.CORRELATION_MATRIX[i][j]
+                bscr_squared += rho * risk_values[i] * risk_values[j]
+        
+        bscr = math.sqrt(max(bscr_squared, 0))
+        return bscr
+    
+    @staticmethod
+    def calculate_scr(risk_values):
+        """
+        Calculate total SCR with operational risk.
+        SCR = BSCR + Op Risk
+        """
+        bscr_components = {k: v for k, v in risk_values.items() if k != 'operational'}
+        
+        bscr = SCRCalculator.calculate_bscr(bscr_components)
+        operational = risk_values.get('operational', 15)
+        
+        scr = bscr + operational
+        
+        return {
+            'bscr': round(bscr, 2),
+            'operational': round(operational, 2),
+            'scr': round(scr, 2)
+        }
+    
+    @staticmethod
+    def apply_shock(risk_values, scenario_id):
+        """
+        Apply shock scenario to risk values.
+        """
+        if scenario_id not in SCRCalculator.SHOCK_IMPACTS:
+            return {'error': f'Unknown scenario: {scenario_id}'}
+        
+        original = SCRCalculator.calculate_scr(risk_values)
+        
+        shocked_values = risk_values.copy()
+        impacts = SCRCalculator.SHOCK_IMPACTS[scenario_id]
+        
+        for risk_type, multiplier in impacts.items():
+            if risk_type in shocked_values:
+                shocked_values[risk_type] = shocked_values[risk_type] * multiplier
+        
+        stressed = SCRCalculator.calculate_scr(shocked_values)
+        
+        impact_pct = ((stressed['scr'] - original['scr']) / original['scr'] * 100) if original['scr'] > 0 else 0
+        
+        return {
+            'original_scr': original['scr'],
+            'stressed_scr': stressed['scr'],
+            'impact_amount': round(stressed['scr'] - original['scr'], 2),
+            'impact_pct': round(impact_pct, 2),
+            'stressed_values': {
+                'market': round(shocked_values['market'], 2),
+                'life': round(shocked_values['life'], 2),
+                'health': round(shocked_values['health'], 2),
+                'nonlife': round(shocked_values['nonlife'], 2),
+                'counterparty': round(shocked_values['counterparty'], 2),
+                'operational': round(shocked_values['operational'], 2)
+            },
+            'stressed_bscr': stressed['bscr'],
+            'scenario': scenario_id
+        }
 
 @app.route('/')
 def index():
@@ -44,6 +164,102 @@ def piliar3():
 @app.route('/fact')
 def fact():
     return render_template('fact.html')
+
+@app.route('/api/scr/calculate', methods=['POST'])
+def calculate_scr():
+    """
+    Calculate SCR with given risk module values.
+    
+    Request JSON:
+        - market: Market risk in M€ (float)
+        - life: Life underwriting risk in M€ (float)
+        - health: Health underwriting risk in M€ (float)
+        - nonlife: Non-Life underwriting risk in M€ (float)
+        - counterparty: Counterparty default risk in M€ (float)
+        - operational: Operational risk in M€ (float)
+    
+    Response JSON:
+        - bscr: Basic Solvency Capital Requirement
+        - scr: Total Solvency Capital Requirement
+        - operational: Operational risk component
+    """
+    try:
+        data = request.get_json()
+        
+        risk_values = {
+            'market': float(data.get('market', 50)),
+            'life': float(data.get('life', 30)),
+            'health': float(data.get('health', 20)),
+            'nonlife': float(data.get('nonlife', 40)),
+            'counterparty': float(data.get('counterparty', 10)),
+            'operational': float(data.get('operational', 15))
+        }
+        
+        result = SCRCalculator.calculate_scr(risk_values)
+        
+        return jsonify({
+            'success': True,
+            'data': result
+        })
+    
+    except Exception as e:
+        print(f"[ERROR] SCR Calculation Error: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+
+@app.route('/api/scr/shock', methods=['POST'])
+def apply_scr_shock():
+    """
+    Apply shock scenario to SCR calculation.
+    
+    Request JSON:
+        - market, life, health, nonlife, counterparty, operational: risk values
+        - scenario: shock scenario ID (e.g., 'market_interest_up')
+    
+    Response JSON:
+        - original_scr: SCR before shock
+        - stressed_scr: SCR after shock
+        - impact_amount: Change in SCR (M€)
+        - impact_pct: Percentage change
+        - stressed_values: Updated risk module values
+        - stressed_bscr: BSCR after shock
+    """
+    try:
+        data = request.get_json()
+        
+        risk_values = {
+            'market': float(data.get('market', 50)),
+            'life': float(data.get('life', 30)),
+            'health': float(data.get('health', 20)),
+            'nonlife': float(data.get('nonlife', 40)),
+            'counterparty': float(data.get('counterparty', 10)),
+            'operational': float(data.get('operational', 15))
+        }
+        
+        scenario = data.get('scenario', 'market_interest_up')
+        
+        result = SCRCalculator.apply_shock(risk_values, scenario)
+        
+        if 'error' in result:
+            return jsonify({'success': False, 'error': result['error']}), 400
+        
+        return jsonify({
+            'success': True,
+            'data': result
+        })
+    
+    except Exception as e:
+        print(f"[ERROR] SCR Shock Error: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
 
 @app.route('/simulate', methods=['POST'])
 def simulate():

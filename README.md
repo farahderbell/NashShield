@@ -17,11 +17,13 @@
 3. [How It Works](#how-it-works)
 4. [Mathematical Foundation](#mathematical-foundation)
 5. [Core Concepts Explained](#core-concepts-explained)
-6. [Technical Stack](#technical-stack)
-7. [Installation & Setup](#installation--setup)
-8. [How to Use](#how-to-use)
-9. [Features](#features)
-10. [Project Structure](#project-structure)
+6. [Pillar I: SCR Calculator](#nashield-pillar-i-scr-calculator-new) ⭐ NEW!
+7. [Pillar II: Nash Equilibrium](#nash-equilibrium-game-theory-optimization-pillar-ii)
+8. [Technical Stack](#technical-stack)
+9. [Installation & Setup](#installation--setup)
+10. [How to Use](#how-to-use)
+11. [Features](#features)
+12. [Project Structure](#project-structure)
 
 ---
 
@@ -245,27 +247,64 @@ Premium/Claim
 
 **Why use it?** Insurance premiums and claims follow random walk patterns like stock prices, never going negative.
 
-### Nash Equilibrium
+## 🎲 Nash Equilibrium: Game Theory Optimization (Pillar II)
 
-**What it is:** A strategy where no player can improve their outcome by changing their decision alone, while ensuring **fairness** so all players benefit.
+**Multi-Player Risk Sharing Strategy**
 
-**Old Problem (Without Fairness):**
-- Algorithm would select: RetA=0.0, RetB=0.0, RetC=1.0 → Profits: [0, 0, 1000]
-- Result: Two companies get nothing! ❌
+NashShield's second module handles the **Pillar II** component: optimizing risk-sharing strategies among multiple insurance companies using game theory.
 
-**New Solution (With Fairness Constraint):**
-- Algorithm now enforces: Ret_i ≥ 0.05 for all players
-- Algorithm selects: RetA=0.2, RetB=0.2, RetC=0.6 → Profits: [200, 200, 600]
-- Result: All companies profit fairly! ✅
+### What is Nash Equilibrium?
 
-**Example (Real Insurance):**
-- Current: RetA=0.3, RetB=0.3, RetC=0.3 → Total profit = $500M
-- If A changes alone to 0.5: A takes too much risk, profit decreases
-- If B changes alone to 0.5: B takes too much risk, profit decreases
-- If C changes alone to 0.5: C takes too much risk, profit decreases
-- **Conclusion:** 0.3, 0.3, 0.3 is Nash Equilibrium (optimal AND fair for everyone)
+**Simple Explanation:** A stable state where no player can improve their profit by changing strategy alone - AND everyone profits fairly.
 
-**Why important?** It's a stable, fair outcome that benefits everyone fairly and is self-sustaining. No player has incentive to deviate unilaterally.
+**Example:**
+- 3 insurance companies must decide how much risk to keep vs. transfer to reinsurers
+- Company A: "If I keep more risk, I make more profit... but I could lose everything"
+- Company B: "Everyone else keeps 30%, so I should too"
+- Company C: "If all of us keep 30%, we all profit equally and safely"
+
+**Result:** All three companies keep 30% and profit $600M each = **Nash Equilibrium** ✅
+
+### Key Formulas (Pillar II)
+
+#### Quota-Share Reinsurance Formula
+
+$$\text{Profit} = \text{Retention} \times (\text{Premiums} - \text{Claims})$$
+
+Where:
+- **Retention** = 1 - Q (percentage company keeps)
+- **Premiums** = Insurance premiums collected
+- **Claims** = Insurance claims paid
+
+**Example:** If Company A retains 40%:
+- Collects $1,000 in premiums
+- Faces $700 in claims
+- Profit = 0.4 × ($1,000 - $700) = **$120** ✅
+
+#### Nash Equilibrium Optimization
+
+$$\text{NE} = \arg\max_{\text{Ret}_A, \text{Ret}_B, \text{Ret}_C} \left[ \sum \text{Profit}_i + 0.1 \times \min(\text{Profit}_i) \right]$$
+
+**Subject to:**
+- $$\sum \text{Ret}_i \leq 1.0$$ (Total retention ≤ 100%)
+- $$\text{Ret}_i \geq 0.05$$ (Fairness: each player minimum 5%)
+
+**What this means:** Find retention rates that maximize TOTAL profit PLUS a fairness bonus for the poorest performer.
+
+### How Pillar II Works in NashShield
+
+1. **Set Initial Claims** - Your company's exposure
+2. **Choose Strategy** - Your retention rate (0-100%)
+3. **Run Simulation** - 1,000 Monte Carlo scenarios
+4. **Get Results** - Classic profit vs. Nash-optimized profit
+5. **See Difference** - How much better Nash is (+30-50% typical)
+
+### Why Both Pillars Matter
+
+- **Pillar I (SCR)** = How much capital must you hold?
+- **Pillar II (Nash)** = How should you share risk optimally?
+
+Together they give a complete risk management framework! 🎯
 
 ---
 
@@ -455,6 +494,196 @@ Automatically finds optimal quotas.
 - Mobile-friendly layout
 - Smooth animations
 - Dark theme for long sessions
+
+### 7. Solvency Lab (Pillar I - NEW!)
+- **Interactive Risk Exposure Sliders** - Adjust 6 risk categories in real-time
+- **Octopus Visualization** - Watch risk grow as tentacles extend
+- **Real-time SCR Calculation** - Instant capital requirement updates
+- **17 Shock Scenarios** - Stress-test portfolio against real market events
+- **Correlation Matrix** - View diversification benefits with color coding
+- **Diversification Dashboard** - See exact capital savings from diversification
+- **Educational Content** - HOW IT WORKS box, QUICK TIPS, DIVERSIFICATION INSIGHTS
+- **Universe Background** - Beautiful pollen effect creating market context
+
+---
+
+## 🎯 NashShield Pillar I: SCR Calculator (NEW!)
+
+**Solvency II Compliance Made Interactive**
+
+The Pillar I module implements the **Solvency II** regulatory framework for calculating the Solvency Capital Requirement (SCR) - the capital an insurer must hold to stay solvent.
+
+![Solvency Lab Solutions](images/sol1.png)
+![Risk Analysis Dashboard](images/sol2.png)
+![Portfolio Optimization](images/sol3.png)
+
+### What is SCR (Solvency Capital Requirement)?
+
+**Simple Explanation:** Imagine an insurance company has customers spread across different risk categories:
+- **Market Risk** (stocks, bonds, currency fluctuations)
+- **Life Risk** (mortality, longevity, lapses)
+- **Health Risk** (medical claims, disability)
+- **Non-Life Risk** (property, liability, accidents)
+- **Counterparty Risk** (reinsurer default)
+- **Operational Risk** (fraud, system failures)
+
+If ALL these risks happened at the same time, how much money would the company lose? That's SCR! 💰
+
+### SCR Calculation Formula
+
+#### Step 1: Calculate Individual Risk Capital
+
+For each risk module, we compute:
+$$SCR_i = \text{Exposure}_i \times \text{Stress Factor}_i$$
+
+Where:
+- **Exposure_i** = Amount of capital exposed to that risk (e.g., 50M € for Market)
+- **Stress Factor_i** = How much loss if worst case happens (e.g., 30% loss)
+
+**Example:**
+- Market Exposure: 50M €
+- Market Stress Factor: 30%
+- Market SCR = 50M € × 0.30 = **15M €**
+
+#### Step 2: Account for Diversification (Correlation Matrix)
+
+Risks don't all happen at the same time! Some risks offset each other:
+- When markets crash 📉, people tend to keep insurance 📈
+- When life expectancy increases, insurance costs rise 📈
+
+We use **correlation coefficients** to model this:
+
+$$BSCR = \sqrt{\sum_{i=1}^{6} \sum_{j=1}^{6} \rho_{i,j} \times SCR_i \times SCR_j}$$
+
+**Correlation Matrix (NashShield Custom):**
+
+| Risk | Market | Life | Health | Non-Life | Counterparty |
+|------|--------|------|--------|----------|-------------|
+| **Market** | 1.000 | 0.250 | 0.250 | 0.250 | 0.500 |
+| **Life** | 0.250 | 1.000 | 0.250 | 0.250 | 0.000 |
+| **Health** | 0.250 | 0.250 | 1.000 | 0.250 | 0.000 |
+| **Non-Life** | 0.250 | 0.500 | 0.000 | 1.000 | 0.000 |
+| **Counterparty** | 0.500 | 0.000 | 0.000 | 0.000 | 1.000 |
+
+**What this means:**
+- Market and Counterparty are correlated (0.500) - reinsurers fail when markets crash
+- Life and Health are uncorrelated (0.000) - independent risk categories
+- Lower correlations = More diversification benefits! 🎯
+
+#### Step 3: Add Operational Risk
+
+Operational risks (fraud, IT failures) don't diversify:
+
+$$SCR_{Total} = BSCR + Operational Risk$$
+
+**Why separate?** Because the company controls ops risk independently of market/life/health risks.
+
+#### Step 4: Apply Shock Scenarios
+
+The calculator stress-tests your portfolio against **17 real-world scenarios:**
+
+1. **Market Crash 20%** - Stock market drops 20%
+2. **Market Crash 40%** - Severe recession
+3. **Interest Rate +2%** - Yields increase
+4. **Interest Rate -2%** - Yields decrease
+5. **Currency Shock ±10%** - FX fluctuations
+6. **Life Mortality +15%** - More deaths (pandemics)
+7. **Life Longevity +5 years** - People live longer
+8. **Health Claims +30%** - Medical inflation
+9. **Non-Life Large Loss** - Major catastrophe
+10. **Reinsurer Default** - Counterparty fails
+... and 7 more real scenarios
+
+**Example - Market Crash 20% Impact:**
+- Base SCR: 100M €
+- Market exposure: 50M €
+- If market crashes 20%: Shock Factor = 1.2
+- Stressed Market SCR: 50M € × 0.30 × 1.2 = **18M €** (was 15M €)
+- New Total SCR: **103M €** (+3% impact)
+
+### Diversification Benefits
+
+The formula shows how much risk you **save** by diversifying:
+
+$$\text{Diversification Benefit} = \frac{\sum SCR_i - BSCR}{\sum SCR_i} \times 100\%$$
+
+**Example:**
+- Sum of individual SCRs: 100M €
+- BSCR (with correlations): 70M €
+- Diversification Benefit: **30%**
+
+This means 30% of your capital requirement is saved just by holding diversified risks! 🎉
+
+### Solvency Lab: Interactive Risk Optimization
+
+The Solvency Lab module lets you:
+
+#### 1. **Adjust Risk Exposure** - 6 Interactive Sliders
+- Market: 0-200M € (default: 50M €)
+- Life: 0-200M € (default: 30M €)
+- Health: 0-150M € (default: 20M €)
+- Non-Life: 0-250M € (default: 40M €)
+- Counterparty: 0-100M € (default: 10M €)
+- Operational: 0-100M € (default: 15M €)
+
+#### 2. **Watch the Octopus Visualization** 🐙
+The octopus is a visual metaphor:
+- **Body** = Core business
+- **6 Tentacles** = 6 risk categories
+- **Tentacle Length** = Risk exposure size
+- **Suction Cups** = Risk granularity
+- **Universe Background** = Market context with pollen particles
+
+As you move sliders, tentacles grow/shrink in real-time!
+
+#### 3. **Calculate SCR Instantly**
+The calculator shows:
+- **BSCR** (Base Solvency Capital Requirement)
+- **Operational Risk** component
+- **Total SCR** required
+
+#### 4. **View Diversification Dashboard**
+- Total risk without correlation: X M €
+- Diversification benefit: Y M €
+- Correlation matrix with color coding
+
+#### 5. **Run Shock Scenarios** ⚡
+Test your portfolio against 17 real scenarios:
+- See impact % and absolute amount
+- Identify vulnerable risk exposures
+- Optimize for worst-case scenarios
+
+#### 6. **Key Insights Box**
+Practical tips:
+- ✓ Move sliders to test exposures
+- ✓ Watch octopus grow with risk
+- ✓ Check correlation matrix
+- ✓ Lower op risk for stability
+- ✓ Exploit low-correlation pairs
+
+### How to Use Solvency Lab
+
+**Scenario 1: Insurance Company A wants to expand**
+1. Increase Market and Life exposures (growth areas)
+2. Watch how BSCR changes in real-time
+3. Run shock scenarios to see downside risk
+4. Adjust Operational Risk level
+5. Compare diversification benefit before/after
+6. Make informed expansion decision ✅
+
+**Scenario 2: Reinsurer wants to reduce capital requirement**
+1. Identify high-correlation risk pairs
+2. Reduce one of the correlated exposures
+3. Watch BSCR decrease disproportionately
+4. Exploit diversification benefits
+5. Lower capital needed while maintaining coverage ✅
+
+**Scenario 3: Risk manager stress-testing**
+1. Set realistic portfolio exposures
+2. Run all 17 shock scenarios
+3. Identify which risks are most impactful
+4. Build hedging strategy
+5. Re-run scenarios with hedges in place ✅
 
 ---
 
