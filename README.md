@@ -349,22 +349,21 @@ For questions or issues, please refer to the documentation in this README or exa
 
 ## 💌 Personal Message
 
-**Made with love ❤️ by Farah** (yes, I'm that crazy person who built a Solvency II simulator for fun 🤪)
+**Made with love ❤️ by Farah** 
 
 ### 📝 Dear Teachers 👨‍🏫
 
 Please don't do to your students what my Solvency course teacher did to us:
 - ❌ **DON'T:** Rush through complex concepts and call it "efficiency"
 - ❌ **DON'T:** Give bad explanations and expect students to magically understand
-- ✅ **DO:** Actually explain things properly (revolutionary idea, I know!)
-- ✅ **DO:** Provide decent learning materials (slides with actual content > empty PowerPoints)
+- ✅ **DO:** Actually explain things properly (revolutionary idea)
 - ✅ **DO:** Remember that students are humans, not robots
 
 **P.S.** Thanks to the one good resource they DID provide - at least there was ONE thing! 😅
 
 ### 🎬 BONUS: Watch "A Beautiful Mind"
 
-Seriously, watch this movie! It's literally about Nash Equilibrium (the thing this whole project is based on). Plus, Russell Crowe's haircut is *almost* as questionable as my code documentation... almost. 🎥✨
+Seriously, watch this movie! It's literally about Nash(the thing this whole project is based on). Plus, Russell Crowe's haircut is *almost* as questionable as my code documentation... almost. 🎥✨
 
 ---
 
