@@ -12,14 +12,15 @@
 1. [What is NashShield?](#what-is-nashield)
 2. [Why Do We Need It?](#why-do-we-need-it)
 3. [How It Works](#how-it-works)
-4. [Mathematical Foundation](#mathematical-foundation)
-5. [Core Concepts](#core-concepts-explained)
-6. [Solvency II Framework](#solvency-ii-framework)
-7. [Technical Stack](#technical-stack)
-8. [Installation & Setup](#installation--setup)
-9. [How to Use](#how-to-use)
-10. [Features](#features)
-11. [Project Structure](#project-structure)
+4. [Functionalities](#functionalities)
+   - [Solvency Lab - 3 Pillars](#-solvency-lab---the-3-pillars)
+   - [Nash Equilibrium Feature](#-nash-equilibrium-feature)
+   - [Simulation Engine Feature](#-simulation-engine-feature)
+5. [Mathematical Foundation](#mathematical-foundation)
+6. [Technical Stack](#technical-stack)
+7. [Installation & Setup](#installation--setup)
+8. [How to Use](#how-to-use)
+9. [Project Structure](#project-structure)
 
 ---
 
@@ -56,6 +57,86 @@ Imagine 3 insurance companies deciding whether to keep risk or transfer it to re
 
 ---
 
+## 🎛️ Functionalities
+
+### 🏛️ Solvency Lab - The 3 Pillars
+
+**Solvency Lab** is the core feature implementing Solvency II's 3-pillar framework for insurance regulation.
+
+#### ✅ Pillar I: Quantitative Requirements (COMPLETED)
+
+**Calculate SCR (Solvency Capital Requirement)** - Determines minimum capital insurance companies must hold to cover unexpected losses.
+
+- **Method:** Applies 17 shock scenarios across 6 risk types
+- **Risk Categories:** Market, Life, Health, Non-Life, Counterparty, Operational
+- **Formula:** $\text{SCR} = \sqrt{\sum \sum \rho(i,j) \times \text{SCR}_i \times \text{SCR}_j} + \text{Operational Risk}$
+- **Features:** Interactive sliders, correlation matrix, shock analysis
+- **Status:** ✅ **Completed Today**
+
+![SCR Calculator Demo 1](images/sol1.png)
+![SCR Calculator Demo 2](images/sol2.png)
+![SCR Calculator Demo 3](images/sol3.png)
+
+#### 🔄 Pillar II: Qualitative Assessment (IN DEVELOPMENT)
+
+**Governance, Risk Management & ORSA** - Evaluate governance structure, risk assessment processes, and Own Risk and Solvency Assessment.
+
+- **Scope:** 
+  - Governance framework evaluation
+  - Risk management effectiveness
+  - ORSA process review
+  - Supervisory review assessment
+- **Status:** 🔄 Next Development Phase
+
+#### 🔄 Pillar III: Disclosure & Transparency (IN DEVELOPMENT)
+
+**Regulatory Reporting & Public Disclosure** - Requirements for transparency to regulators and market discipline.
+
+- **Scope:**
+  - Generate regulatory reports
+  - Publish solvency ratios
+  - Disclose risk exposures
+  - Market transparency requirements
+- **Status:** 🔄 Next Development Phase
+
+---
+
+### 🎮 Nash Equilibrium Feature
+
+Find optimal risk-sharing strategies where all companies benefit fairly through game theory.
+
+![Nash Equilibrium Demo 1](images/nash1.png)
+![Nash Equilibrium Demo 2](images/nash2.png)
+![Nash Equilibrium Demo 3](images/nash3.png)
+
+**How It Works:**
+- Input retention rates for 3 companies
+- Run Nash optimization algorithm
+- Compare against classic (non-cooperative) strategy
+- **Typical Improvement:** +30-50% total profit increase
+
+**Key Concept:** Nash Equilibrium is a state where:
+- No company can improve profit by changing strategy alone
+- Everyone cooperates fairly
+- The solution is stable and sustainable
+
+---
+
+### 🧪 Simulation Engine Feature
+
+**Monte Carlo Simulations** validate all calculations across 1,000 independent scenarios using Geometric Brownian Motion.
+
+$$\text{Simulated Value} = \frac{1}{N} \sum_{i=1}^{N} \text{Outcome}_i$$
+
+**Confidence:** ±3% margin of error across 1,000 scenarios
+
+**Used by:**
+- Solvency Lab (Pillar I) - Validates SCR calculations
+- Nash Equilibrium - Validates profit projections
+- Risk analysis across all functionalities
+
+---
+
 ## 📐 Mathematical Foundation
 
 ### Quota-Share Reinsurance Formula
@@ -68,12 +149,20 @@ Where: **Q** = Ceded Quota, **P** = Premiums, **C** = Claims
 ### Geometric Brownian Motion
 $$S_T = S_0 \cdot e^{(\mu - \frac{\sigma^2}{2})T + \sigma\sqrt{T}Z}$$
 
-Simulates realistic premium/claim paths with μ = 5% drift and σ = 20% volatility across 1,000 scenarios.
+Simulates realistic premium/claim paths with:
+- **μ** = 5% drift (expected return)
+- **σ** = 20% volatility
+- **N** = 1,000 scenarios
 
 ### Nash Equilibrium Optimization
 $$\text{NE} = \arg\max \left[ \sum \text{Profit}_i + 0.1 \times \min(\text{Profit}_i) \right]$$
 
 **Subject to:** Σ Retention_i ≤ 1.0 and Retention_i ≥ 0.05 (fairness constraints)
+
+### SCR Calculation
+$$\text{SCR}_{\text{total}} = \sqrt{\sum_{i,j} \rho_{ij} \times \text{SCR}_i \times \text{SCR}_j} + \text{SCR}_{\text{operational}}$$
+
+Where ρ(i,j) is the correlation coefficient between risk categories.
 
 ---
 
@@ -97,49 +186,6 @@ $$\text{NE} = \arg\max \left[ \sum \text{Profit}_i + 0.1 \times \min(\text{Profi
 
 ---
 
-## 📊 Pillar II: Nash Equilibrium (Governance & Risk Sharing)
-
-### What is Nash Equilibrium?
-
-**Simple Explanation:** A stable state where no player can improve profit by changing strategy alone, and everyone profits fairly.
-
-![Nash Equilibrium Demo 1](images/nash1.png)
-![Nash Equilibrium Demo 2](images/nash2.png)
-![Nash Equilibrium Demo 3](images/nash3.png)
-
-**Key Insight:** When all 3 companies keep 30% retention, they maximize total profit with fairness—this is Nash Equilibrium.
-
-### How It Works in NashShield
-
-1. Set initial claims for each company
-2. Choose retention rates (0-100%)
-3. Run simulation (1,000 Monte Carlo scenarios)
-4. Compare classic vs. Nash results (+30-50% improvement typical)
-
----
-
-## 📈 Pillar III: Simulation Engine
-
-### Monte Carlo Simulation
-$$\text{Average Result} = \frac{1}{N} \sum_{i=1}^{N} \text{Outcome}_i$$
-
-Runs **1,000 independent scenarios** with ±3% margin of error.
-
-### The 3 Pillars Integration
-
-```
-PILLAR I: Quantitative Requirements (SCR)
-✓ Calculate capital needed
-↓
-PILLAR II: Governance & Risk Sharing (Nash)
-✓ Find optimal strategy
-↓
-PILLAR III: Simulation & Reporting
-✓ Validate with 1,000 scenarios
-```
-
----
-
 ## 🛠️ Technical Stack
 
 ### Backend
@@ -151,10 +197,14 @@ PILLAR III: Simulation & Reporting
 - **nashpy 0.0.43** - Game theory library
 
 ### Frontend
-- **HTML5 / CSS3** - Structure & styling (glassmorphism)
-- **JavaScript (ES6+)** - Interactivity
-- **Plotly 6.5.2** - Dynamic charts
-- **Canvas API** - Particle backgrounds
+- **HTML5 / CSS3** - Structure & styling (glassmorphism, responsive)
+- **JavaScript (ES6+)** - Interactivity & DOM manipulation
+- **Plotly 6.5.2** - Dynamic charts & visualizations
+- **Canvas API** - Particle backgrounds & animations
+
+### Infrastructure
+- **Virtual Environment:** venv2 (Python 3.13)
+- **Package Manager:** pip
 
 ---
 
@@ -165,115 +215,134 @@ PILLAR III: Simulation & Reporting
 - pip (Python package manager)
 
 ### Steps
+
+1. **Navigate to project directory:**
 ```bash
 cd c:\Users\User1\NashShield
-pip install -r requirements.txt
-python -m flask --app backend.app run --port 5001
-# Open http://127.0.0.1:5001
 ```
+
+2. **Activate virtual environment:**
+```bash
+# Windows PowerShell
+.\venv2\Scripts\Activate.ps1
+
+# Windows Command Prompt
+venv2\Scripts\activate
+```
+
+3. **Install dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Run the Flask server:**
+```bash
+python -m flask --app backend.app run --port 5001
+```
+
+5. **Open in browser:**
+Navigate to `http://127.0.0.1:5001`
 
 ---
 
 ## 📖 How to Use
 
-### Basic Workflow
+### Solvency Lab (Pillar I - SCR Calculator)
 
-1. **Set Initial Claims** - Use sliders for each company ($100-$5,000)
-2. **Choose Strategy** - Set retention rates (sum must be ≤ 1.0)
-3. **Select Scenario** - Classic Reinsurance OR Nash Equilibrium
-4. **Run Simulation** - Click button (1,000 scenarios)
-5. **View Results** - See profits and Nash improvement
+1. **Adjust Risk Sliders**
+   - Market Risk: 0-200M€
+   - Life Risk: 0-200M€
+   - Health Risk: 0-150M€
+   - Non-Life Risk: 0-250M€
+   - Counterparty Risk: 0-100M€
+   - Operational Risk: 0-100M€
 
-### Example Scenario
+2. **View Results**
+   - Real-time SCR calculation
+   - BSCR breakdown
+   - Diversification benefit displayed
+   - Risk profile visualization
 
-**Setup:**
-- Company A: $2,000, Company B: $1,500, Company C: $1,000
-- Your choice: q = [0.2, 0.2, 0.2]
+3. **Analyze Shocks**
+   - 17 different shock scenarios
+   - See impact on capital requirements
+   - Understand risk sensitivity
 
-**Result:**
-```
-Classic: Total profit = $1,800
-Nash (q = [0.5, 0.3, 0.1]): Total profit = $2,650
-Improvement: +47% 🚀
-```
+### Nash Equilibrium Feature
 
----
-
-## ✨ Features
-
-- **Real-Time Sliders** - Instant updates
-- **Monte Carlo Simulation** - 1,000 scenarios, statistical accuracy
-- **Nash Equilibrium Solver** - Automatically finds optimal quotas
-- **Visual Comparisons** - Side-by-side results with profit differences
-- **Educational Design** - Beginner-friendly with advanced formulas
-- **Responsive UI** - Beautiful glassmorphism, mobile-friendly
-- **Solvency Lab (Pillar I)** - Risk exposure sliders, octopus visualization, SCR calculation, 17 shock scenarios
+1. **Set Parameters** (future development)
+2. **Run Optimization** (future development)
+3. **Compare Results** (future development)
 
 ---
 
-## 🎯 Pillar I: SCR Calculator
-
-**Solvency II Compliance - Calculate capital requirements interactively.**
-
-![Solvency Lab Solutions](images/sol1.png)
-![Risk Analysis Dashboard](images/sol2.png)
-![Portfolio Optimization](images/sol3.png)
-
-### What is SCR?
-
-**Simple Explanation:** The capital an insurer must hold to stay solvent if multiple risks materialize simultaneously.
-
-Risk categories: Market, Life, Health, Non-Life, Counterparty, Operational.
-
-### SCR Formula
-
-**Step 1: Individual Risk Capital**
-$$SCR_i = \text{Exposure}_i \times \text{Stress Factor}_i$$
-
-**Example:** Market exposure 50M€, stress factor 30% → SCR = 15M€
-
-**Step 2: Diversification**
-$$BSCR = \sqrt{\sum_{i}^{} \sum_{j}^{} \rho_{i,j} \times SCR_i \times SCR_j}$$
-
-**Step 3: Total SCR**
-$$SCR_{Total} = BSCR + \text{Operational Risk}$$
-
-### Solvency Lab Features
-
-1. **6 Interactive Sliders** - Adjust risk exposures
-2. **Octopus Visualization** 🐙 - Watch tentacles grow
-3. **Real-time SCR Calculation** - Instant updates
-4. **17 Shock Scenarios** - Stress-test portfolio
-5. **Diversification Dashboard** - See capital savings
-6. **Universe Background** - Particle effect
-
----
-
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```
 NashShield/
 ├── backend/
-│   ├── app.py              # Flask server & API
-│   ├── simulation.py        # GBM & profit calculations
-│   └── nash.py             # Nash equilibrium solver
-├── templates/              # HTML pages
-├── static/                 # CSS, JS, assets
-├── images/                 # PNG images
-├── requirements.txt        # Dependencies
-└── README.md               # This file
+│   ├── __init__.py
+│   ├── app.py              # Flask application & routes
+│   ├── nash.py             # Nash equilibrium solver
+│   ├── simulation.py        # Monte Carlo simulation engine
+├── frontend/
+│   ├── static/             # CSS, JS, assets
+│   ├── templates/          # HTML templates
+│   │   ├── index.html
+│   │   ├── piliar1.html    # Solvency Lab (Pillar I)
+│   │   ├── piliar2.html    # Governance (Pillar II) - TBD
+│   │   ├── piliar3.html    # Reporting (Pillar III) - TBD
+│   │   ├── nashequilibrium.html
+│   │   ├── results.html
+├── data/                   # Data files
+├── images/                 # Screenshots & diagrams
+│   ├── sol1.png, sol2.png, sol3.png   # Pillar I demos
+│   ├── nash1.png, nash2.png, nash3.png # Nash demos
+├── notebooks/              # Jupyter notebooks for exploration
+├── requirements.txt        # Python dependencies
+├── README.md              # This file
+└── venv2/                 # Virtual environment
 ```
 
 ---
 
-## 🎓 Key Takeaway
+## 📊 Key Features
 
-**NashShield proves that cooperation beats competition.**
-
-By using game theory and mathematical optimization, insurance companies can increase profits by **30-50%** while reducing risk. That's the power of Nash Equilibrium! 🚀
+- ✅ **Interactive SCR Calculator** - Real-time calculations with 17 shock scenarios
+- ✅ **Visualization** - Octopus graphics, particle backgrounds, animated charts
+- ✅ **Game Theory** - Nash equilibrium optimization for fair risk sharing
+- ✅ **Monte Carlo Simulation** - 1,000 scenarios for robust analysis
+- ✅ **Responsive Design** - Works on desktop and tablet
+- ✅ **Educational** - Clear explanations and examples throughout
 
 ---
 
-*Made with ❤️ by Farah*  
-*Last Updated: January 23, 2026*  
-*Created for understanding insurance game theory and risk sharing optimization*
+## 📝 Development Status
+
+| Component | Status | Phase |
+|-----------|--------|-------|
+| Pillar I (SCR Calculator) | ✅ Complete | Deployed |
+| Pillar II (Governance) | 🔄 In Progress | Design |
+| Pillar III (Disclosure) | 🔄 Planned | TBD |
+| Nash Equilibrium UI | 🔄 In Progress | Development |
+| Simulation Engine | ✅ Complete | Integrated |
+
+---
+
+## 📚 References
+
+- **Solvency II Directive:** EU Regulation 2009/138/EC
+- **Game Theory:** Nash, J. (1950) "Equilibrium points in n-person games"
+- **Insurance Mathematics:** Wüthrich, M. (2016) "Non-Life Insurance Pricing with GLM"
+
+---
+
+## 📧 Support
+
+For questions or issues, please refer to the documentation in this README or examine the code comments throughout the project.
+
+**Educational Purpose:** This project is designed to teach concepts of insurance solvency regulation and game theory. Use it to understand, not to implement in production.
+
+---
+
+**Last Updated:** January 23, 2026
