@@ -43,7 +43,6 @@ Imagine 3 insurance companies deciding whether to keep risk or transfer it to re
 **The Solution:** Nash Equilibrium shows the optimal strategy where:
 - Each company cooperates fairly
 - Everyone accepts the right amount of risk
-- **Total profits increase by 30-50%** 📈
 - The system is stable (no one benefits by deviating alone)
 
 ---
