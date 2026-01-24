@@ -350,7 +350,7 @@ For questions or issues, please refer to the documentation in this README or exa
 
 **Made with love ❤️ by Farah** 
 
-**P.S.**  Dear Teachers Thanks to the one good resource u DID provide - at least there was ONE thing! 😅
+**P.S.**  Dear Teachers Thanks to the one good resource u DID provide - at least there was ONE good thing! 😅
 
 ### 🎬 BONUS: Watch "A Beautiful Mind"
 
