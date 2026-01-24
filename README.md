@@ -65,7 +65,7 @@ Imagine 3 insurance companies deciding whether to keep risk or transfer it to re
 
 #### ✅ Pillar I: Quantitative Requirements (COMPLETED)
 
-**Calculate SCR (Solvency Capital Requirement)** - Determines minimum capital insurance companies must hold to cover unexpected losses.
+**Calculate SCR (Solvency Capital Requirement)** - The Solvency Capital Requirement is the amount of capital that an insurance or reinsurance company must hold to ensure that it can meet its obligations over the next 12 months with a 99.5% probability, even under adverse scenarios.
 
 - **Method:** Applies 17 shock scenarios across 6 risk types
 - **Risk Categories:** Market, Life, Health, Non-Life, Counterparty, Operational
